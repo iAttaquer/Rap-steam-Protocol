@@ -1,65 +1,10 @@
-from django.shortcuts import render
-
-# Create your views here.
 import csv
-from io import BytesIO
 
-from django.contrib.auth.models import User
-from django.http import HttpResponse
-from django.shortcuts import render
-from django.template.loader import get_template
-from django.views import View
-from xhtml2pdf import pisa
+from django.contrib.auth.models import User, Group
 
 from common.models import Address
-from schools.models import School, Settings
-
-
-def render_to_pdf(template_src, context_dict):
-    template = get_template(template_src)
-    html = template.render(context_dict)
-    result = BytesIO()
-    pdf = pisa.pisaDocument(BytesIO(html.encode("utf-8")), result)
-    if pdf.err:
-        return HttpResponse("Invalid PDF", status_code=400, content_type='text/plain')
-    return HttpResponse(result.getvalue(), content_type='application/pdf')
-
-
-class ProtocolView(View):
-    def get(self, request, *args, **kwargs):
-        schools = School.objects.filter(director=request.user)
-        return render(request,
-                      context={"schools": schools},
-                      template_name='schools/protocol.html')
-
-    def post(self, request, pk, *args, **kwargs):
-        # TODO: generate PDFs based on school data
-        school = School.objects.get(director=request.user, pk=pk)
-        context_dict = {
-            "school_name": school.school_name,
-            "pdf_title": "Protokół {}".format(school.school_name),
-            "director": f"{school.director.first_name} {school.director.last_name}",
-            "logo": Settings.objects.all().last().pdf_protocol_logo.path,
-            "font": Settings.objects.all().last().pdf_protocol_font.path
-        }
-        # print(Settings.objects.all().last().pdf_protocol_logo)
-        if not school.goods_received:
-            school.goods_received = True
-            school.save()
-        else:
-            response = render_to_pdf("schools/protocol_pdf.html", context_dict)
-            filename = f"{school.RSPO}.pdf"
-            content = f"inline; filename={filename}"
-            download = request.GET.get("download")
-            if download:
-                content = f"attachment; filename={filename}"
-            response["Content-Disposition"] = content
-            return response
-
-        schools = School.objects.filter(director=request.user)
-        return render(request,
-                      context={"schools": schools},
-                      template_name='schools/protocol.html')
+from schools.models import School
+from schools.models import Settings
 
 
 def load_schools_from_csv(file_path):
@@ -119,6 +64,14 @@ def load_schools_from_csv(file_path):
 
                 if not created:
                     print("DUPLICATE", school_data['RSPO'], school_data['school_name'], school_data['phone'])
+
+                add_group("director", school)
+
             except Exception as e:
                 print(e)
                 print(row)
+
+
+def add_group(group, user):
+    group, created = Group.objects.get_or_create(name=group)
+    user.groups.add(group)
