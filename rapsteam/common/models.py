@@ -73,3 +73,40 @@ class Settings(models.Model):
     def __str__(self):
         return f'Ustawienie {self.pk}'
 
+class EquipmentType(models.Model):
+    name = models.CharField(max_length=255, verbose_name="Nazwa sprzętu")
+    description = models.TextField(verbose_name="Opis sprzętu", blank=True, null=True)
+    
+    def __str__(self):
+        return self.name
+    
+    class Meta:
+        verbose_name = "Typ sprzętu"
+        verbose_name_plural = "Typy sprzętu"
+        
+class Equipment(models.Model):
+    equipment_type = models.ForeignKey(EquipmentType, on_delete=models.CASCADE, related_name='equipment', verbose_name="Typ sprzętu")
+    serial_number = models.CharField(max_length=255, verbose_name="Numer seryjny", blank=True, null=True)
+    notes = models.TextField(verbose_name="Notatki", blank=True, null=True)
+    
+    def __str__(self):
+        return f"{self.equipment_type.name} ({self.serial_number})"
+    
+    class Meta:
+        verbose_name = "Sprzęt"
+        verbose_name_plural = "Sprzęty"
+        
+
+class SchoolEquipment(models.Model):
+    school = models.ForeignKey(School, on_delete=models.CASCADE, related_name='school_equipment', verbose_name="Szkoła")
+    equipment = models.ForeignKey(Equipment, on_delete=models.CASCADE, related_name='school_equipment', verbose_name="Sprzęt")
+    quantity = models.PositiveIntegerField(verbose_name="Ilość")
+    
+    def __str__(self):
+        return f"{self.school.school_name} - {self.equipment.equipment_type.name} ({self.quantity})"
+    
+    class Meta:
+        verbose_name = "Sprzęt szkolny"
+        verbose_name_plural = "Sprzęt szkolny"
+        
+    
