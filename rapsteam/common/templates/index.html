@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Wybór Szkoły</title>
+    <style>
+        /* Style CSS */
+        body {
+            font-family: sans-serif;
+        }
+
+        nav {
+            background-color: #333;
+            color: white;
+            padding: 10px;
+        }
+
+        nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav li {
+            display: inline;
+            margin-right: 20px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 50px;
+        }
+
+        #school-select {
+            width: 200px;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+
+        #submit-button {
+            padding: 10px 20px;
+            background-color: #4CAF50; /* Zielony */
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <ul>
+            <li><a href="">Strona Główna</a></li>
+            </ul>
+    </nav>
+
+    <div class="container">
+        <select id="school-select">
+            {% for szkola in lista_szkol %}
+                <option value="{{ school.id }}">{{ szkola }}</option>
+            {% endfor %}
+        </select>
+
+        <button id="submit-button">Wybierz Szkołę</button>
+    </div>
+
+    <script>
+        // Skrypt JavaScript
+        const selectElement = document.getElementById('school-select');
+        const submitButton = document.getElementById('submit-button');
+
+        submitButton.addEventListener('click', () => {
+            const selectedSchoolId = selectElement.value;
+            // Tutaj możesz dodać logikę związaną z wybraną szkołą
+            console.log("Wybrana szkoła:", selectedSchoolId); 
+        });
+    </script>
+
+</body>
+</html>
+{% comment %} <!DOCTYPE html>
+<html>
+<head>
+    <title>Wybór szkoły</title>
+    <style>
+        body { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; }
+        .dropdown { position: relative; display: inline-block; }
+        .dropdown-content { display: none; position: absolute; background-color: #f9f9f9; min-width: 160px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); z-index: 1; }
+        .dropdown-content a { color: black; padding: 12px 16px; text-decoration: none; display: block; }
+        .dropdown-content a:hover { background-color: #f1f1f1 }
+        .dropdown:hover .dropdown-content { display: block; }
+    </style>
+</head>
+<body>
+    <h1>Wybierz szkołę</h1>
+
+    <div class="dropdown">
+        <button id="dropdownBtn" style="width: 300px; height: 40px;">Szkoły</button>
+        <div class="dropdown-content">
+            {% for szkola in lista_szkol %}
+                <a href="#" data-szkola="{{ szkola }}">{{ szkola }}</a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <button id="generujBtn" style="margin: 20px">Generuj</button>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $(".dropdown-content a").click(function(event) {
+                event.preventDefault(); // Zapobiega domyślnemu zachowaniu linku
+                var wybranaSzkola = $(this).data("szkola");
+                $("#dropdownBtn").text(wybranaSzkola);
+            });
+
+            $("#generujBtn").click(function() {
+                var wybranaSzkola = $("#dropdownBtn").text(); 
+                // ... (tutaj dodaj logikę generowania raportu lub inną akcję)
+            });
+        });
+    </script>
+</body>
+</html> {% endcomment %}
