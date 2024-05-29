@@ -11,6 +11,10 @@ class Address(models.Model):
     district = models.CharField(max_length=255, verbose_name="Powiat")
     commune = models.CharField(max_length=255, verbose_name="Gmina")
     house_number = models.CharField(max_length=255, verbose_name="Numer domu")
+    
+    class Meta:
+        verbose_name = 'Adres'
+        verbose_name_plural = 'Adresy'
 
 class School(models.Model):
     RSPO = models.IntegerField(verbose_name="RSPO", unique=True)

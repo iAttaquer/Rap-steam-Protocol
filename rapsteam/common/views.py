@@ -12,11 +12,15 @@ from django.views import View
 from xhtml2pdf import pisa
 
 from common.models import Address
-from common.models import School, Settings
+from common.models import School, Settings, SchoolEquipment
 
 def HiWorld(request):
     return HttpResponse('Hello wordl!')
-    
+
+def wybor_szkoly(request):
+    lista_szkol = School.objects.all()
+    return render(request, 'index.html', {'lista_szkol': lista_szkol})
+
 
 def render_to_pdf(template_src, context_dict):
     template = get_template(template_src)
