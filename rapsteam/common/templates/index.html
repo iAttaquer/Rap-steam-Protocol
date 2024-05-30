@@ -1,3 +1,4 @@
+{% include "navbar.html" %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -8,27 +9,7 @@
             font-family: sans-serif;
         }
 
-        nav {
-            background-color: #fffff1;
-            color: white;
-            padding: 10px;
-        }
-
-        nav ul {
-            list-style: none;
-            margin: 0;
-            padding: 0;
-        }
-
-        nav li {
-            display: inline;
-            margin-right: 20px;
-        }
-
-        nav a {
-            color: white;
-            text-decoration: none;
-        }
+       
 
         .container {
             display: flex;
@@ -50,17 +31,17 @@
             border: none;
             cursor: pointer;
         }
+        .pdf-protocol {
+            padding: 10px 20px;
+            background-color: #4CAF50; /* Zielony */
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
 
-    <nav>
-        <ul>
-            <li>
-                <img src=https://rap.podkarpackie.pl/wp-content/uploads/2023/04/cropped-rapsteam-logo.png alt="Rapsteam logo" width="89" height="47">
-            </li>
-            </ul>
-    </nav>
 
     <div class="container">
         <select id="school-select">
@@ -70,6 +51,7 @@
         </select>
 
         <button id="submit-button">Wybierz Szkołę</button>
+        <button id="pdfButton">Podgląd PDF</button>
     </div>
 
     <script>
@@ -81,6 +63,10 @@
             const selectedSchoolId = selectElement.value;
             // Tutaj możesz dodać logikę związaną z wybraną szkołą
             console.log("Wybrana szkoła:", selectedSchoolId); 
+
+            document.getElementById('pdfButton').addEventListener('click', function() {
+                window.open('/pdf_view/', '_blank');
+            });
         });
     </script>
 

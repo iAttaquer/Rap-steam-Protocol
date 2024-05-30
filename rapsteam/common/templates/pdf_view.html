@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Template</title>
+</head>
+<body>
+    <h1>Protokól odbioru sprzetu</h1>
+    <div class="section">
+        <p>1. Miejsce odbioru: <strong>$Nazwa, $Miejscowosc, $Ulica, $Numer</strong></p>
+        <p>2. Data odbioru: <strong>Data_now()</strong></p>
+        <p>3. Przedmiotem/ami odbioru w ramach Umowy nr <strong>nr_umowy()</strong> jest/sa:</p>
+        
+    </div>
+    <div class="section">
+        <p>4. Potwierdzenie kompletnosci realizacji przedmiotu Umowy:</p>
+        <ul>
+            <li>tak</li>
+            <li>nie – zastrzezenia ……………………………………………………………………………</li>
+        </ul>
+    </div>
+    <div class="section">
+        <p>5. Potwierdzenie zgodnosci jakosci przyjmowanego przedmiotu Umowy:</p>
+        <ul>
+            <li>zgodne</li>
+            <li>niezgodne – zastrzezenia ……………………………………………………………………</li>
+        </ul>
+    </div>
+    <div class="section">
+        <p>6. Termin wykonania Umowy:</p>
+        <ul>
+            <li>zgodny z Umowa</li>
+            <li>niezgodny z Umowa – zastrzeaenia ………………………………………………………...</li>
+        </ul>
+    </div>
+    <div class="section">
+        <p>7. Kolejny termin odbioru (jesli zostal wyznaczony):</p>
+        <ul>
+            <li>zgodny z ustaleniem</li>
+            <li>niezgodny z ustaleniem – zastrzezenia ……………………………………………………...</li>
+        </ul>
+    </div>
+    <div class="section">
+        <p>8. Koncowy wynik odbioru:</p>
+        <ul>
+            <li>pozytywny</li>
+            <li>negatywny – zastrzezenia …………………………………………………………………...</li>
+        </ul>
+    </div>
+    <div class="section">
+        <p>9. Podpisy:</p>
+        <div class="signsInline">
+            <p>……….………………………</p>
+            <p>(przedstawiciel Wykonawcy)</p>
+        </div>
+        <div class="signsInline">
+            <p>1 ………………………….</p>
+        </div>
+        <div class="signature">
+            <p>2 ………………………….</p>
+        </div>
+        <div class="signature">
+            <p>3 ………………………….</p>
+        </div>
+        <div class="signature">
+            <p>4 ………………………….</p>
+        </div>
+        <div class="signature">
+            <p>5 ………………………….</p>
+            <p>(czlonkowie komisji odbioru)</p>
+        </div>
+    </div>
+
+    <div class = "attachment">
+    <table>
+        <thead>
+            <tr>
+                <th>Lp</th>
+                <th>Zamawiany przedmiot</th>
+                <th>Ilosc</th>
+                <th>Nr Seryjny</th>
+                <th>Swiadectwo jakosci</th>
+                <th>Uwagi</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>1</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>Dostarczono/nie dostarczono/nie dotyczy</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
+
+<style>
+    body {
+        font-family: Times new Roman, sans-serif;
+        font-size: 12px;
+    }
+    table {
+        border: 1px solid black;
+    }
+    .signatureDo {
+        text-align: right;
+    }
+    .attachment {
+        margin-top: 20px;
+        page-break-before: always;
+    }
+    .signsInline .p {
+        display: inline-block;
+        background: #000000;
+    }
+</style>

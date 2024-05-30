@@ -10,6 +10,7 @@ from django.shortcuts import render
 from django.template.loader import get_template
 from django.views import View
 from xhtml2pdf import pisa
+import xhtml2pdf.pisa as pisa
 
 from common.models import Address
 from common.models import School, Settings, SchoolEquipment
@@ -20,16 +21,6 @@ def HiWorld(request):
 def wybor_szkoly(request):
     lista_szkol = School.objects.all()
     return render(request, 'index.html', {'lista_szkol': lista_szkol})
-
-
-def render_to_pdf(template_src, context_dict):
-    template = get_template(template_src)
-    html = template.render(context_dict)
-    result = BytesIO()
-    pdf = pisa.pisaDocument(BytesIO(html.encode("utf-8")), result)
-    if pdf.err:
-        return HttpResponse("Invalid PDF", status_code=400, content_type='text/plain')
-    return HttpResponse(result.getvalue(), content_type='application/pdf')
 
 
 class ProtocolView(View):
@@ -130,3 +121,19 @@ def load_schools_from_csv(request):
                 print(e)
                 print(row)
     return HttpResponse('hejka')
+
+def schools(request):
+    return render(request, 'schools.html')
+
+def render_to_pdf(template_src, context_dict):
+    template = get_template(template_src)
+    html = template.render(context_dict)
+    result = BytesIO()
+    pdf = pisa.pisaDocument(BytesIO(html.encode("utf-8")), result)
+    if pdf.err:
+        return HttpResponse("Invalid PDF", status_code=400, content_type='text/plain')
+    return HttpResponse(result.getvalue(), content_type='application/pdf')
+
+def pdf_view(request):
+    context = {'key': 'value'}
+    return render_to_pdf('pdf_view.html', context)
