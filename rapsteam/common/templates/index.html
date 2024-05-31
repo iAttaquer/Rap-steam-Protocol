@@ -6,7 +6,7 @@
     <style>
         /* Style CSS */
         body {
-            font-family: sans-serif;
+            font-family: Jost, sans-serif;
         }
 
         .container {
@@ -126,7 +126,11 @@
             </ul>
         </div>
         
-        <button id="submit-button">Wybierz Szkołę</button>
+        <form action="{% url 'wybor_szkoly2' %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" id="selected-school-id" name="school_id">
+            <button type="submit" id="submit-button">Wybierz Szkołę</button>
+        </form>
         <button id="pdfButton">Podgląd PDF</button>
     </div>
 
@@ -135,6 +139,7 @@
         const schoolList = document.getElementById('school-list');
         const listItems = schoolList.getElementsByTagName('li');
         const clearButton = document.getElementById('clear-button');
+        const submitButton = document.getElementById('submit-button');
         let filter = '';
 
         clearButton.addEventListener('click', () => {
@@ -190,6 +195,20 @@
                 clearButton.style.display = 'block';
                 schoolList.style.display = 'none';
                 // Tutaj możesz dodać logikę związaną z wybraną szkołą
+            }
+        });
+
+        submitButton.addEventListener('click', () => {
+            const selectedSchoolId = document.querySelector('#school-list li[style="display: ;"]');
+            if (!selectedSchoolItem) {
+                alert("Wybierz szkołę z listy.");  // Lub inny sposób informowania użytkownika
+                return;  // Zatrzymaj przesyłanie formularza
+            }
+            if (selectedSchoolItem) { // Sprawdź, czy jakiś element jest widoczny
+                const selectedSchoolId = selectedSchoolItem.dataset.schoolId;
+                document.getElementById('selected-school-id').value = selectedSchoolId;
+                console.log("Przesyłane ID szkoły:", selectedSchoolId);
+                document.querySelector('form').submit(); // Przesłanie formularza
             }
         });
 

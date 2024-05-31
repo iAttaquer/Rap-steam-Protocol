@@ -6,7 +6,7 @@ from io import BytesIO
 
 from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseServerError
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.template.loader import get_template
 from django.views import View
 from xhtml2pdf import pisa
@@ -22,6 +22,19 @@ def wybor_szkoly(request):
     lista_szkol = School.objects.all()
     return render(request, 'index.html', {'lista_szkol': lista_szkol})
 
+def wybor_szkoly2(request):
+    if request.method == 'POST':
+        school_id = request.POST.get('school_id')
+        if not school_id:
+            return redirect('wybor_szkoly')  # Przekierowanie, jeśli school_id jest pusty
+        try:
+            szkola = School.objects.get(id=school_id)
+            request.session['selected_school'] = szkola
+        except School.DoesNotExist:
+            return redirect('wybor_szkoly')
+        return render(request, 'wybor_szkoly2.html', {'szkola': szkola})
+    else:
+        return redirect('wybor_szkoly')
 
 class ProtocolView(View):
     def get(self, request, *args, **kwargs):
