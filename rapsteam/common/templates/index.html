@@ -9,7 +9,6 @@
             font-family: sans-serif;
         }
 
-
         .container {
             display: flex;
             flex-direction: column;
@@ -24,15 +23,25 @@
         }
 
         #submit-button {
+            width: 200px;
+            height: 60px;
             padding: 10px 20px;
-            background-color: #4CAF50; /* Zielony */
+            background-color: #008391;
             color: white;
             border: none;
             cursor: pointer;
+            border-radius: 30px;
+            font-size: 16px;
+            margin: 20px;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        #submit-button:hover {
+            background-color: #169BA6;
+            box-shadow: 0px 3px 12px rgba(0,0,0,0.2);
         }
         .pdf-protocol {
             padding: 10px 20px;
-            background-color: #4CAF50; /* Zielony */
+            background-color: #4CAF50;
             color: white;
             border: none;
             cursor: pointer;
@@ -42,32 +51,74 @@
             position: relative;
         }
 
+        #search-box{
+            width: 300px;
+            height: 40px;
+            padding: 5px;
+            padding-right: 24px;
+            font-size: 16px;
+            border-radius: 15px;
+            border: 2px solid;
+            margin-top: 50px;
+        }
+        #clear-button {
+            position: absolute;
+            margin-top: -20px;
+            width: 16px;
+            height: 16px;
+            right: 6px;
+            padding-left: 1px;
+            text-align: center;
+            justify-content: center;
+            transform: translateY(-50%);
+            background: rgba(230,230,230,0.9);
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            display: none;
+        }
+
         #school-list {
             display: none;
             position: absolute;
             top: 100%;
             left: 0;
-            width: 200px;
-            height: 40px;
-            border: 1px solid #ccc;
+            width: 300px;
+            max-height: 200px;
+            overflow-y: auto;
             list-style: none;
             background-color: white;
+            border-radius: 5px;
+            border: 1px solid #a8a8a8;
             z-index: 10;
         }
+        #school-list::-webkit-scrollbar {
+            width: 8px; /* Szerokość paska przewijania */
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        #school-list::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
         #school-list li{
-            background-color: white;
+            background-color: #fafafa;
+            font-size: 14px;
+            padding: 2px;
         }
         #school-list li:hover{
             background-color: #d9d9d9;
         }
     </style>
+
 </head>
 <body>
-
 
     <div class="container">
         <div id="school-list-container">
             <input type="text" id="search-box" placeholder="Wyszukaj szkołe">
+            <button id="clear-button">×</button>
             <ul id="school-list">
                 {% for szkola in lista_szkol %}
                     <li data-school-id="{{ school.id }}">{{ szkola }}</li>
@@ -83,36 +134,61 @@
         const searchBox = document.getElementById('search-box');
         const schoolList = document.getElementById('school-list');
         const listItems = schoolList.getElementsByTagName('li');
+        const clearButton = document.getElementById('clear-button');
+        let filter = '';
+
+        clearButton.addEventListener('click', () => {
+            searchBox.value = '';
+            schoolList.style.display = 'block';
+            clearButton.style.display = 'none';
+            setTimeout(() => {
+                searchBox.focus();
+            }, 0);
+            searchBox.dispatchEvent(new Event('input'));
+        });
 
         searchBox.addEventListener('input', () => {
-            const filter = searchBox.value.toLowerCase();
+            filter = searchBox.value.toLowerCase();
+            let visibleItemsCount = 0;
+
             for (let i = 0; i < listItems.length; i++) {
                 const schoolName = listItems[i].textContent.toLowerCase();
                 if (schoolName.includes(filter)) {
                     listItems[i].style.display = '';
+                    visibleItemsCount++;
                 } else {
                     listItems[i].style.display = 'none';
                 }
             }
-            schoolList.style.display = filter ? 'block' : 'none'; // Pokaż listę tylko jeśli coś wpisano
+            schoolList.style.display = visibleItemsCount > 0 ? 'block' : 'none';
+            clearButton.style.display = filter ? 'block' : 'none';
         });
 
         searchBox.addEventListener('focus', () => {
-            if (searchBox.value) { // Pokaż listę tylko jeśli coś wpisano
-                schoolList.style.display = 'block';
+            let visibleItemsCount = 0;
+
+            for (let i = 0; i < listItems.length; i++) {
+                const schoolName = listItems[i].textContent.toLowerCase();
+                if (schoolName.includes(filter)) {
+                    listItems[i].style.display = '';
+                    visibleItemsCount++;
+                } else {
+                    listItems[i].style.display = 'none';
+                }
             }
+            schoolList.style.display = visibleItemsCount > 0 ? 'block' : 'none'; // Pokaż listę tylko jeśli coś wpisano
+            clearButton.style.display = searchBox.value ? 'block' : 'none';
         });
 
         searchBox.addEventListener('blur', () => {
-            setTimeout(() => {
-                schoolList.style.display = 'none';
-            }, 200);
+            schoolList.style.display = 'none';
         });
 
-        schoolList.addEventListener('click', (event) => {
+        schoolList.addEventListener('mousedown', (event) => {
             if (event.target.tagName === 'LI') {
                 searchBox.value = event.target.textContent;
-                schoolList.style.display = 'none'; // Ukryj listę po wybraniu szkoły
+                clearButton.style.display = 'block';
+                schoolList.style.display = 'none';
                 // Tutaj możesz dodać logikę związaną z wybraną szkołą
             }
         });
