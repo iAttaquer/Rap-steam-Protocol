@@ -13,7 +13,21 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-top: 80px;
+            padding-top: 80px;
+            height: 100%;
+            background-color: #F5F7FA;
+            box-shadow: 0px 3px 2px rgba(0,0,0,0.2)
+        }
+
+        
+        .block-rect {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 100px;
+            background-color: white;
+            border-radius: 10px;
+            margin: 40px;
         }
 
         #school-select {
@@ -114,24 +128,26 @@
 
 </head>
 <body>
-
     <div class="container">
-        <div id="school-list-container">
-            <input type="text" id="search-box" placeholder="Wyszukaj szkołe">
-            <button id="clear-button">×</button>
-            <ul id="school-list">
-                {% for szkola in lista_szkol %}
-                    <li data-school-id="{{ school.id }}">{{ szkola }}</li>
-                {% endfor %}
-            </ul>
+        <div class="block-rect">
+            <h2>Wybierz szkołę:</h2>
+            <div id="school-list-container">
+                <input type="text" id="search-box" placeholder="Wyszukaj szkołe">
+                <button id="clear-button">×</button>
+                <ul id="school-list">
+                    {% for szkola in lista_szkol %}
+                        <li data-school-name="{{ szkola }}">{{ szkola }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            
+            <form action="{% url 'wybor_szkoly2' %}" method="get">
+                {% csrf_token %}
+                <input type="hidden" id="selected-school-name" name="szkola">
+                <button type="submit" id="submit-button">Dalej</button>
+            </form>
+            <button id="pdfButton">Podgląd PDF</button>
         </div>
-        
-        <form action="{% url 'wybor_szkoly2' %}" method="post">
-            {% csrf_token %}
-            <input type="hidden" id="selected-school-id" name="school_id">
-            <button type="submit" id="submit-button">Wybierz Szkołę</button>
-        </form>
-        <button id="pdfButton">Podgląd PDF</button>
     </div>
 
     <script>
@@ -194,21 +210,18 @@
                 searchBox.value = event.target.textContent;
                 clearButton.style.display = 'block';
                 schoolList.style.display = 'none';
-                // Tutaj możesz dodać logikę związaną z wybraną szkołą
+                
+                document.getElementById('selected-school-name').value = event.target.dataset.schoolName;
             }
         });
 
         submitButton.addEventListener('click', () => {
-            const selectedSchoolId = document.querySelector('#school-list li[style="display: ;"]');
-            if (!selectedSchoolItem) {
-                alert("Wybierz szkołę z listy.");  // Lub inny sposób informowania użytkownika
-                return;  // Zatrzymaj przesyłanie formularza
-            }
-            if (selectedSchoolItem) { // Sprawdź, czy jakiś element jest widoczny
-                const selectedSchoolId = selectedSchoolItem.dataset.schoolId;
-                document.getElementById('selected-school-id').value = selectedSchoolId;
-                console.log("Przesyłane ID szkoły:", selectedSchoolId);
-                document.querySelector('form').submit(); // Przesłanie formularza
+            const selectedSchoolName = document.getElementById('selected-school-name').value;
+            if (!selectedSchoolName) {
+                alert("Wybierz szkołę z listy.");
+                return;
+            } else {
+                document.querySelector('form').submit();
             }
         });
 

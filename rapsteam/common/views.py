@@ -23,18 +23,13 @@ def wybor_szkoly(request):
     return render(request, 'index.html', {'lista_szkol': lista_szkol})
 
 def wybor_szkoly2(request):
-    if request.method == 'POST':
-        school_id = request.POST.get('school_id')
-        if not school_id:
-            return redirect('wybor_szkoly')  # Przekierowanie, jeśli school_id jest pusty
-        try:
-            szkola = School.objects.get(id=school_id)
-            request.session['selected_school'] = szkola
-        except School.DoesNotExist:
-            return redirect('wybor_szkoly')
-        return render(request, 'wybor_szkoly2.html', {'szkola': szkola})
+    nazwa_szkoly = request.GET.get('szkola', '')
+    if nazwa_szkoly:
+        request.session['nazwa_szkoly'] = nazwa_szkoly
     else:
         return redirect('wybor_szkoly')
+    
+    return render(request, 'wybor_szkoly2.html', {'nazwa_szkoly': nazwa_szkoly})
 
 class ProtocolView(View):
     def get(self, request, *args, **kwargs):

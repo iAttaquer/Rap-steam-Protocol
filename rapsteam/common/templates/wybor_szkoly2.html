@@ -25,7 +25,10 @@
         <button>
             przycisk
         </button>
-        <p>{{ szkola.school_name }}</p>
+        <p>{{ nazwa_szkoly }}</p>
+        <form method="post">
+        {% csrf_token %}
+        </form>
     </div>
 </body>
 </html>
