@@ -156,7 +156,9 @@
         const listItems = schoolList.getElementsByTagName('li');
         const clearButton = document.getElementById('clear-button');
         const submitButton = document.getElementById('submit-button');
+        const selectedSchoolName = document.getElementById('selected-school-name');
         let filter = '';
+        let exactMatchFound = false;
 
         clearButton.addEventListener('click', () => {
             searchBox.value = '';
@@ -166,20 +168,31 @@
                 searchBox.focus();
             }, 0);
             searchBox.dispatchEvent(new Event('input'));
+            selectedSchoolName.value = '';
+            exactMatchFound = false;
         });
 
         searchBox.addEventListener('input', () => {
-            filter = searchBox.value.toLowerCase();
+            filter = searchBox.value.toUpperCase();
             let visibleItemsCount = 0;
+            exactMatchFound = false;
 
             for (let i = 0; i < listItems.length; i++) {
-                const schoolName = listItems[i].textContent.toLowerCase();
+                const schoolName = listItems[i].textContent.toUpperCase();
                 if (schoolName.includes(filter)) {
                     listItems[i].style.display = '';
                     visibleItemsCount++;
+                    if(schoolName === filter) {
+                        exactMatchFound = true;
+                    }
                 } else {
                     listItems[i].style.display = 'none';
                 }
+            }
+            if (exactMatchFound) {
+                selectedSchoolName.value = searchBox.value.toUpperCase();
+            } else {
+                selectedSchoolName.value = '';
             }
             schoolList.style.display = visibleItemsCount > 0 ? 'block' : 'none';
             clearButton.style.display = filter ? 'block' : 'none';
@@ -189,7 +202,7 @@
             let visibleItemsCount = 0;
 
             for (let i = 0; i < listItems.length; i++) {
-                const schoolName = listItems[i].textContent.toLowerCase();
+                const schoolName = listItems[i].textContent.toUpperCase();
                 if (schoolName.includes(filter)) {
                     listItems[i].style.display = '';
                     visibleItemsCount++;
@@ -210,19 +223,20 @@
                 searchBox.value = event.target.textContent;
                 clearButton.style.display = 'block';
                 schoolList.style.display = 'none';
-                
-                document.getElementById('selected-school-name').value = event.target.dataset.schoolName;
+                selectedSchoolName.value = event.target.dataset.schoolName.toUpperCase();
+                exactMatchFound = true;
             }
         });
 
         submitButton.addEventListener('click', () => {
-            const selectedSchoolName = document.getElementById('selected-school-name').value;
-            if (!selectedSchoolName) {
-                alert("Wybierz szkołę z listy.");
+            if (!exactMatchFound) {
+                alert("Szkoła o podanej nazwie nie istnieje w bazie danych. Wybierz szkołę z listy.");
                 return;
-            } else {
-                document.querySelector('form').submit();
             }
+            
+            document.querySelector('form').submit();
+
+            
         });
 
         document.getElementById('pdfButton').addEventListener('click', function() {

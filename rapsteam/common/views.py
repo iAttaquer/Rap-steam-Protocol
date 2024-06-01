@@ -5,7 +5,7 @@ import csv
 from io import BytesIO
 
 from django.contrib.auth.models import User
-from django.http import HttpResponse, HttpResponseServerError
+from django.http import HttpResponse, HttpResponseServerError, JsonResponse
 from django.shortcuts import render, redirect
 from django.template.loader import get_template
 from django.views import View
@@ -20,6 +20,11 @@ def HiWorld(request):
 
 def wybor_szkoly(request):
     lista_szkol = School.objects.all()
+    
+    if request.method == 'GET' and 'search' in request.GET:
+        search_term = request.GET.get('search')
+        szkola_istnieje = School.objects.filter(school_name__icontains=search_term).exists()
+        return JsonResponse({'exists': szkola_istnieje})
     return render(request, 'index.html', {'lista_szkol': lista_szkol})
 
 def wybor_szkoly2(request):
