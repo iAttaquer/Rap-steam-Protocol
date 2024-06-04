@@ -39,7 +39,10 @@
             <button>
                 przycisk
             </button>
+            <h2>Wybrana szkoła:</h2>
             <p>{{ nazwa_szkoly }}</p>
+            <p>Ades:</p>
+            <p>{{ miasto }}, {{ ulica }} {{ numer }}</p>
             <form method="post">
             {% csrf_token %}
             </form>

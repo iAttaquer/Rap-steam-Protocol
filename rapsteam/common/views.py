@@ -20,7 +20,7 @@ def HiWorld(request):
 
 def wybor_szkoly(request):
     lista_szkol = School.objects.all()
-    
+
     if request.method == 'GET' and 'search' in request.GET:
         search_term = request.GET.get('search')
         szkola_istnieje = School.objects.filter(school_name__icontains=search_term).exists()
@@ -30,11 +30,27 @@ def wybor_szkoly(request):
 def wybor_szkoly2(request):
     nazwa_szkoly = request.GET.get('szkola', '')
     if nazwa_szkoly:
-        request.session['nazwa_szkoly'] = nazwa_szkoly
+        try:
+            szkola = School.objects.get(school_name=nazwa_szkoly)
+            request.session['nazwa_szkoly'] = nazwa_szkoly
+            
+            adres_szkoly = szkola.address
+            miasto = adres_szkoly.city
+            ulica = adres_szkoly.street
+            numer = adres_szkoly.house_number
+            
+            return render(request, 'wybor_szkoly2.html', {
+                'nazwa_szkoly': nazwa_szkoly,
+                'miasto': miasto,
+                'ulica': ulica,
+                'numer': numer,
+            })
+        except School.DoesNotExist:
+            return redirect('wybor_szkoly')
     else:
         return redirect('wybor_szkoly')
-    
-    return render(request, 'wybor_szkoly2.html', {'nazwa_szkoly': nazwa_szkoly})
+
+    # return render(request, 'wybor_szkoly2.html', {'nazwa_szkoly': nazwa_szkoly})
 
 class ProtocolView(View):
     def get(self, request, *args, **kwargs):
