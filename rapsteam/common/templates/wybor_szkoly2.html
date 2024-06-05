@@ -17,7 +17,6 @@
             padding-top: 100px;
             min-height: 100%;
             background-color: #F5F7FA;
-            
         }
         .block-rect {
             display: flex;
@@ -45,21 +44,45 @@
             width: content;
             left: 0;
         }
-        {% comment %} tr {
-            display: flex;
-            flex-direction: row;
-        } {% endcomment %}
         td:first-child {
-            {% comment %} width: content; {% endcomment %}
             height: 25px;
-            {% comment %} border: 1px solid; {% endcomment %}
+        }
+        #place td:first-child {
+            width: 120px;
+        }
+        #date td:first-child {
+            width: 120px;
+        }
+        #nr_umowy td:first-child {
+            width: 160px;
+        }
+        #komplet td:first-child {
+            width: 160px;
+        }
+        #zgodnosc td:first-child {
+            width: 200px;
+        }
+        #termin td:first-child {
+            width: 270px;
+        }
+        #kolejny td:first-child {
+            width: 300px;
+        }
+        #wynik td:first-child {
+            width: 210px;
         }
         .input {
             height: 25px;
             padding: 3px;
-            width: min-content;
+            width: 200px;
             border-radius: 5px;
             border: 1px solid;
+        }
+        textarea {
+            border-radius: 5px;
+            padding: 3px;
+            resize: none;
+            width: 100%;
         }
     </style>
 </head>
@@ -68,7 +91,7 @@
         <div class="block-rect">
             <h3>1. Miejsce odbioru:</h3>
             <hr>
-            <table>
+            <table id="place">
                 <tr>
                     <td>Nazwa szkoły:</td>
                     <td>{{ nazwa_szkoly }}</td>
@@ -93,7 +116,7 @@
         <div class="block-rect">
             <h3>2. Data odbioru:</h3>
             <hr>
-            <table>
+            <table id="date">
                 <tr>
                     <td>Wybierz datę:</td>
                     <td>
@@ -105,7 +128,7 @@
         <div class="block-rect">
             <h3>3. Nr umowy:</h3>
             <hr>
-            <table>
+            <table id="nr_umowy">
                 <tr>
                     <td>Podaj numer umowy:</td>
                     <td>
@@ -117,8 +140,136 @@
         <div class="block-rect">
             <h3>4. Potwierdzenie kompletności realizacji przedmiotu Umowy:</h3>
             <hr>
-
+            <table id="komplet">
+                <tr>
+                    <td><input type="radio" name="kompl_tak" value="kompl_tak"> TAK</td>
+                </tr>
+                <tr>
+                    <td><input type="radio" name="kompl_nie" value="kompl_nie"> NIE - zastrzeżenia:</td>
+                    <td><textarea name="zastrz_kompl" id="zastrz_kompl" cols="" rows="3"></textarea></td>
+                </tr>
+            </table>
+        </div>
+        <div class="block-rect">
+            <h3>5. Potwierdzenie zgodności jakości przyjmowanego przedmiotu Umowy:</h3>
+            <hr>
+            <table id="zgodnosc">
+                <tr>
+                    <td><input type="radio" name="zgod_tak" value="zgod_tak"> zgodne</td>
+                </tr>
+                <tr>
+                    <td><input type="radio" name="zgod_nie" value="zgod_nie"> niezgodne - zastrzeżenia: </td>
+                    <td><textarea name="zastrz_zgod" id="zastrz_zgod" cols="" rows="3"></textarea></td>
+                </tr>
+            </table>
+        </div>
+        <div class="block-rect">
+            <h3>6. Termin wykonania Umowy:</h3>
+            <hr>
+            <table id="termin">
+                <tr>
+                    <td><input type="radio" name="term_tak" value="term_tak"> zgodny z Umową</td>
+                </tr>
+                <tr>
+                    <td><input type="radio" name="term_nie" value="term_nie"> niezgodny z Umową - zastrzeżenia: </td>
+                    <td><textarea name="zastrz_term" id="zastrz_term" cols="" rows="3"></textarea></td>
+                </tr>
+            </table>
+        </div>
+        <div class="block-rect">
+            <h3>7. Kolejny termin odbioru (jeśli został wyznaczony):</h3>
+            <hr>
+            <table id="kolejny">
+                <tr>
+                    <td><input type="radio" name="kole_tak" value="kole_tak"> zgodny z ustaleniem</td>
+                </tr>
+                <tr>
+                    <td><input type="radio" name="kole_nie" value="kole_nie"> niezgodny z ustaleniem - zastrzeżenia: </td>
+                    <td><textarea name="zastrz_kole" id="zastrz_kole" cols="" rows="3"></textarea></td>
+                </tr>
+            </table>
+        </div>
+        <div class="block-rect">
+            <h3>8. Końcowy wynik odbioru:</h3>
+            <hr>
+            <table id="wynik">
+                <tr>
+                    <td><input type="radio" name="wyn_tak" value="wyn_tak"> pozytywny</td>
+                </tr>
+                <tr>
+                    <td><input type="radio" name="wyn_nie" value="wyn_nie"> negatywny - zastrzeżenia: </td>
+                    <td><textarea name="zastrz_wyn" id="zastrz_wyn" cols="" rows="3"></textarea></td>
+                </tr>
+            </table>
         </div>
     </div>
+    <script>
+        const kompl_tak = document.querySelector('input[name="kompl_tak"][value="kompl_tak"]');
+        const kompl_nie = document.querySelector('input[name="kompl_nie"][value="kompl_nie"]');
+        const kompl_zastrzezenia = document.getElementById('zastrz_kompl');
+        const zgod_tak = document.querySelector('input[name="zgod_tak"][value="zgod_tak"]');
+        const zgod_nie = document.querySelector('input[name="zgod_nie"][value="zgod_nie"]');
+        const zgod_zastrzezenia = document.getElementById('zastrz_zgod');
+        const term_tak = document.querySelector('input[name="term_tak"][value="term_tak"]');
+        const term_nie = document.querySelector('input[name="term_nie"][value="term_nie"]');
+        const term_zastrzezenia = document.getElementById('zastrz_term');
+        const kole_tak = document.querySelector('input[name="kole_tak"][value="kole_tak"]');
+        const kole_nie = document.querySelector('input[name="kole_nie"][value="kole_nie"]');
+        const kole_zastrzezenia = document.getElementById('zastrz_kole');
+        const wyn_tak = document.querySelector('input[name="wyn_tak"][value="wyn_tak"]');
+        const wyn_nie = document.querySelector('input[name="wyn_nie"][value="wyn_nie"]');
+        const wyn_zastrzezenia = document.getElementById('zastrz_wyn');
+        kompl_zastrzezenia.style.display = 'none';
+        zgod_zastrzezenia.style.display = 'none';
+        term_zastrzezenia.style.display = 'none';
+        kole_zastrzezenia.style.display = 'none';
+        wyn_zastrzezenia.style.display = 'none';
+
+        kompl_tak.addEventListener('click', () => {
+            kompl_nie.checked = false;
+            kompl_zastrzezenia.style.display = 'none';
+            kompl_zastrzezenia.value = '';
+        });
+        kompl_nie.addEventListener('click', () => {
+            kompl_tak.checked = false;
+            kompl_zastrzezenia.style.display = 'block';
+        });
+        zgod_tak.addEventListener('click', () => {
+            zgod_nie.checked = false;
+            zgod_zastrzezenia.style.display = 'none';
+            zgod_zastrzezenia.value = '';
+        });
+        zgod_nie.addEventListener('click', () => {
+            zgod_tak.checked = false;
+            zgod_zastrzezenia.style.display = 'block';
+        });
+        term_tak.addEventListener('click', () => {
+            term_nie.checked = false;
+            term_zastrzezenia.style.display = 'none';
+            term_zastrzezenia.value = '';
+        });
+        term_nie.addEventListener('click', () => {
+            term_tak.checked = false;
+            term_zastrzezenia.style.display = 'block';
+        });
+        kole_tak.addEventListener('click', () => {
+            kole_nie.checked = false;
+            kole_zastrzezenia.style.display = 'none';
+            kole_zastrzezenia.value = '';
+        });
+        kole_nie.addEventListener('click', () => {
+            kole_tak.checked = false;
+            kole_zastrzezenia.style.display = 'block';
+        });
+        wyn_tak.addEventListener('click', () => {
+            wyn_nie.checked = false;
+            wyn_zastrzezenia.style.display = 'none';
+            wyn_zastrzezenia.value = '';
+        });
+        wyn_nie.addEventListener('click', () => {
+            wyn_tak.checked = false;
+            wyn_zastrzezenia.style.display = 'block';
+        });
+    </script>
 </body>
 </html>
