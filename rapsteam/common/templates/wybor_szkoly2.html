@@ -44,7 +44,7 @@
             width: content;
             left: 0;
         }
-        td:first-child {
+        table td:first-child {
             height: 25px;
         }
         #place td:first-child {
@@ -83,6 +83,43 @@
             padding: 3px;
             resize: none;
             width: 100%;
+        }
+        #przedmioty {
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        #przedmioty th {
+            height: 25px;
+        }
+        #przedmioty td, th {
+            border: 1px solid black;
+            text-align: center;
+        }
+        #uwagi {
+            border: none;
+            outline: none;
+        }
+        select {
+            height: 25px;
+            border-radius: 5px;
+            width: content;
+        }
+        #submit-button {
+            width: 200px;
+            height: 60px;
+            padding: 10px 20px;
+            background-color: #008391;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 30px;
+            font-size: 16px;
+            margin: 20px;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        #submit-button:hover {
+            background-color: #169BA6;
+            box-shadow: 0px 3px 12px rgba(0,0,0,0.2);
         }
     </style>
 </head>
@@ -212,15 +249,39 @@
             <hr>
             <table id="przedmioty">
                 <tr>
-                    <td>Lp</td>
-                    <td>Nazwa przedmiotu</td>
-                    <td>Ilość</td>
-                    <td>Nr Seryjny</td>
-                    <td>Świadectwo jakości</td>
-                    <td>Uwagi</td>
+                    <th style="width: 4%">Lp</th>
+                    <th style="width: 25%">Nazwa przedmiotu</th>
+                    <th style="width: 5%">Ilość</th>
+                    <th style="width: 15%">Nr Seryjny</th>
+                    <th style="width: 15%">Świadectwo jakości</th>
+                    <th style="width: 35%">Uwagi</th>
                 </tr>
+                {% for sprzet in sprzet_szkolny %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ sprzet.equipment.name }}</td>
+                    <td>{{ sprzet.quantity }}</td>
+                    <td style="padding: 2px">
+                        {% for serial_number in sprzet.serial_numbers_list %}
+                        {{ serial_number }}<br>
+                        {% endfor %}
+                    </td>
+                    <td>
+                        <select name="status_dostarczenia" id="status_dostarczenia">
+                            <option value="dostarczono">dostarczono</option>
+                            <option value="nie_dostarczono">nie dostarczono</option>
+                        </select>
+                    </td>
+                    <td><textarea name="" id="uwagi" cols="" rows="2" tabindex="0"></textarea></td>
+                </tr>
+                {% endfor %}
             </table>
         </div>
+        <form action="{% url 'pdf_view' %}" method="get">
+            {% csrf_token %}
+            <input type="hidden" id="selected-school-name" name="szkola">
+            <button type="submit" id="submit-button">Generuj PDF</button>
+        </form>
     </div>
     <script>
         const kompl_tak = document.querySelector('input[name="kompl_tak"][value="kompl_tak"]');

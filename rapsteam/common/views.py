@@ -39,11 +39,17 @@ def wybor_szkoly2(request):
             ulica = adres_szkoly.street
             numer = adres_szkoly.house_number
             
+            sprzet_szkolny = []
+            for sprzet in SchoolEquipment.objects.filter(school=szkola):
+                sprzet.serial_numbers_list = sprzet.serial_numbers.split(',')
+                sprzet_szkolny.append(sprzet)
+            
             return render(request, 'wybor_szkoly2.html', {
                 'nazwa_szkoly': nazwa_szkoly,
                 'miasto': miasto,
                 'ulica': ulica,
                 'numer': numer,
+                'sprzet_szkolny': sprzet_szkolny,
             })
         except School.DoesNotExist:
             return redirect('wybor_szkoly')

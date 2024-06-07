@@ -33,6 +33,8 @@ class School(models.Model):
 
     goods_received = models.BooleanField(default=False, null=True, blank=True, verbose_name='Otrzymane towary')
     acceptance_protocol = models.FileField(null=True, blank=True, verbose_name='Protokół odbioru')
+    
+    equipment = models.ManyToManyField('Equipment', through='SchoolEquipment', verbose_name="Sprzęt")
 
     def __str__(self):
         return self.school_name
@@ -77,24 +79,23 @@ class Settings(models.Model):
     def __str__(self):
         return f'Ustawienie {self.pk}'
 
-class EquipmentType(models.Model):
+# class EquipmentType(models.Model):
+#     name = models.CharField(max_length=255, verbose_name="Nazwa sprzętu")
+#     description = models.TextField(verbose_name="Opis sprzętu", blank=True, null=True)
+    
+#     def __str__(self):
+#         return self.name
+    
+#     class Meta:
+#         verbose_name = "Typ sprzętu"
+#         verbose_name_plural = "Typy sprzętu"
+        
+class Equipment(models.Model):
     name = models.CharField(max_length=255, verbose_name="Nazwa sprzętu")
     description = models.TextField(verbose_name="Opis sprzętu", blank=True, null=True)
     
     def __str__(self):
-        return self.name
-    
-    class Meta:
-        verbose_name = "Typ sprzętu"
-        verbose_name_plural = "Typy sprzętu"
-        
-class Equipment(models.Model):
-    equipment_type = models.ForeignKey(EquipmentType, on_delete=models.CASCADE, related_name='equipment', verbose_name="Typ sprzętu")
-    serial_number = models.CharField(max_length=255, verbose_name="Numer seryjny", blank=True, null=True)
-    notes = models.TextField(verbose_name="Notatki", blank=True, null=True)
-    
-    def __str__(self):
-        return f"{self.equipment_type.name} ({self.serial_number})"
+        return f"{self.name} ({self.description})"
     
     class Meta:
         verbose_name = "Sprzęt"
@@ -105,9 +106,10 @@ class SchoolEquipment(models.Model):
     school = models.ForeignKey(School, on_delete=models.CASCADE, related_name='school_equipment', verbose_name="Szkoła")
     equipment = models.ForeignKey(Equipment, on_delete=models.CASCADE, related_name='school_equipment', verbose_name="Sprzęt")
     quantity = models.PositiveIntegerField(verbose_name="Ilość")
+    serial_numbers = models.CharField(max_length=255, verbose_name="Numery seryjne", blank=True, null=True)
     
     def __str__(self):
-        return f"{self.school.school_name} - {self.equipment.equipment_type.name} ({self.quantity})"
+        return f"{self.school.school_name} - {self.equipment.name} ({self.quantity})"
     
     class Meta:
         verbose_name = "Sprzęt szkolny"
