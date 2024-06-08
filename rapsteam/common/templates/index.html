@@ -142,7 +142,7 @@
                 </ul>
             </div>
             
-            <form action="{% url 'wybor_szkoly2' %}" method="get">
+            <form action="{% url 'wybor_szkoly2' %}" method="post">
                 {% csrf_token %}
                 <input type="hidden" id="selected-school-name" name="szkola">
                 <button type="submit" id="submit-button">Dalej</button>
@@ -236,8 +236,6 @@
             }
             
             document.querySelector('form').submit();
-
-            
         });
 
         document.getElementById('pdfButton').addEventListener('click', function() {

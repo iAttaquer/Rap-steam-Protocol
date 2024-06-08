@@ -267,7 +267,7 @@
                         {% endfor %}
                     </td>
                     <td>
-                        <select name="status_dostarczenia" id="status_dostarczenia">
+                        <select name="status_dostarczenia_{{ forloop.counter }}" id="status_dostarczenia_{{ forloop.counter }}">
                             <option value="dostarczono">dostarczono</option>
                             <option value="nie_dostarczono">nie dostarczono</option>
                         </select>
@@ -277,10 +277,10 @@
                 {% endfor %}
             </table>
         </div>
-        <form action="{% url 'pdf_view' %}" method="get">
+        <form action="{% url 'protocol_pdf' nazwa_szkoly %}" method="post">
             {% csrf_token %}
-            <input type="hidden" id="selected-school-name" name="szkola">
             <button type="submit" id="submit-button">Generuj PDF</button>
+            {% comment %} <a href="{% url 'protocol' szkola %}"> {% endcomment %}
         </form>
     </div>
     <script>
@@ -349,6 +349,15 @@
         wyn_nie.addEventListener('click', () => {
             wyn_tak.checked = false;
             wyn_zastrzezenia.style.display = 'block';
+        });
+        const submitButton = document.getElementById('submit-button');
+        submitButton.addEventListener('click', () => {
+            if (!exactMatchFound) {
+                alert("Szkoła o podanej nazwie nie istnieje w bazie danych. Wybierz szkołę z listy.");
+                return;
+            }
+            
+            document.querySelector('form').submit();
         });
     </script>
 </body>

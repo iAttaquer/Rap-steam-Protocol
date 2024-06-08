@@ -79,16 +79,6 @@ class Settings(models.Model):
     def __str__(self):
         return f'Ustawienie {self.pk}'
 
-# class EquipmentType(models.Model):
-#     name = models.CharField(max_length=255, verbose_name="Nazwa sprzętu")
-#     description = models.TextField(verbose_name="Opis sprzętu", blank=True, null=True)
-    
-#     def __str__(self):
-#         return self.name
-    
-#     class Meta:
-#         verbose_name = "Typ sprzętu"
-#         verbose_name_plural = "Typy sprzętu"
         
 class Equipment(models.Model):
     name = models.CharField(max_length=255, verbose_name="Nazwa sprzętu")
