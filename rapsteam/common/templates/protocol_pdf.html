@@ -5,13 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PDF Template</title>
     <style>
-        {% comment %} @font-face {
-            font-family: 'MyFont';
-            src: url('{{ font }}') format('truetype');
-        }
-        body {
-            font-family: 'MyFont', sans-serif;
-        } {% endcomment %}
     </style>
 </head>
 <body>
@@ -21,8 +14,10 @@
     {% else %}
         <p>Logoo</p>
     {% endif %}
-
-    <h2>Szkoła: {{ school_name }}</h2>
+    <div class="section">
+        <h2>Szkoła: {{ school_name }}</h2>
+    </div>
+    
     {% comment %} <p>Adres: {{ school_address }}</p> {% endcomment %}
     {% comment %} <p>Dyrektor: {{ director }}</p> {% endcomment %}
     {% comment %} <p>Data odbioru: {{data_odbioru }}</p> {% endcomment %}

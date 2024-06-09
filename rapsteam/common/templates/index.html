@@ -145,6 +145,7 @@
             <form action="{% url 'wybor_szkoly2' %}" method="post">
                 {% csrf_token %}
                 <input type="hidden" id="selected-school-name" name="szkola">
+                <input type="hidden" id="selected-school-city" name="miasto">
                 <button type="submit" id="submit-button">Dalej</button>
             </form>
             <button id="pdfButton">Podgląd PDF</button>
@@ -152,12 +153,33 @@
     </div>
 
     <script>
+        function truncateAtParenthesisWithSpaces(str) {
+            const index = str.indexOf(' (');
+            if (index === -1) {
+                return str;
+            } else {
+                return str.substring(0, index);
+            }
+        }
+        function extractTextFromParentheses(str) {
+            const regex = /\(([^)]+)\)/; // Wyrażenie regularne do znalezienia tekstu w nawiasach
+            const match = regex.exec(str);
+            if (match) {
+                return match[1];
+            } else {
+                return null;
+            }
+        }
+        function capitalizeFirstLetter(str) {
+            return str.charAt(0).toUpperCase() + str.substring(1);
+        }
         const searchBox = document.getElementById('search-box');
         const schoolList = document.getElementById('school-list');
         const listItems = schoolList.getElementsByTagName('li');
         const clearButton = document.getElementById('clear-button');
         const submitButton = document.getElementById('submit-button');
         const selectedSchoolName = document.getElementById('selected-school-name');
+        const selectedSchoolCity = document.getElementById('selected-school-city');
         let filter = '';
         let exactMatchFound = false;
 
@@ -191,9 +213,11 @@
                 }
             }
             if (exactMatchFound) {
-                selectedSchoolName.value = searchBox.value.toUpperCase();
+                selectedSchoolName.value = truncateAtParenthesisWithSpaces(searchBox.value).toUpperCase();
+                selectedSchoolCity.value = capitalizeFirstLetter(extractTextFromParentheses(searchBox.value))
             } else {
                 selectedSchoolName.value = '';
+                selectedSchoolCity.value = '';
             }
             schoolList.style.display = visibleItemsCount > 0 ? 'block' : 'none';
             clearButton.style.display = filter ? 'block' : 'none';
@@ -224,7 +248,8 @@
                 searchBox.value = event.target.textContent;
                 clearButton.style.display = 'block';
                 schoolList.style.display = 'none';
-                selectedSchoolName.value = event.target.dataset.schoolName.toUpperCase();
+                selectedSchoolName.value = truncateAtParenthesisWithSpaces(event.target.dataset.schoolName).toUpperCase();
+                selectedSchoolCity.value = extractTextFromParentheses(event.target.dataset.schoolName);
                 exactMatchFound = true;
             }
         });

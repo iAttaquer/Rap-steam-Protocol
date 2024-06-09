@@ -135,20 +135,17 @@
                 </tr>
                 <tr>
                     <td>Miejscowość:</td>
-                    <td><input class="input" type="text" value="{{ miasto }}"></td>
+                    <td>{{ miasto }}</td>
                 </tr>
                 <tr>
                     <td>Ulica:</td>
-                    <td><input class="input" type="text" value="{{ ulica }}"></td>
+                    <td>{{ ulica }}</td>
                 </tr>
                 <tr>
                     <td>Numer:</td>
-                    <td><input class="input" type="text" value="{{ numer}}"></td>
+                    <td>{{ numer}}</td>
                 </tr>
             </table>
-            <form method="post">
-            {% csrf_token %}
-            </form>
         </div>
         <div class="block-rect">
             <h3>2. Data odbioru:</h3>
@@ -157,7 +154,9 @@
                 <tr>
                     <td>Wybierz datę:</td>
                     <td>
-                        <input class="input" type="date" id="data_odbioru" name="data_odbioru">
+                        <form>
+                            <input class="input" type="date" id="data_odbioru" name="data_odbioru">
+                        </form>
                     </td>
                 </tr>
             </table>
@@ -277,8 +276,13 @@
                 {% endfor %}
             </table>
         </div>
-        <form action="{% url 'protocol_pdf' nazwa_szkoly %}" method="post">
+        <form action="{% url 'protocol_pdf' nazwa_szkoly %}" method="get">
             {% csrf_token %}
+            {% comment %} <input type="hidden" name="nazwa_szkoly" value="{{ nazwa_szkoly }}">
+            <input type="hidden" name="miasto" value="{{ miasto }}">
+            <input type="hidden" name="ulica" value="{{ ulica }}">
+            <input type="hidden" name="numer" value="{{ numer }}"> {% endcomment %}
+            {% comment %} <input type="hidden" id="selected_date" name="date"> {% endcomment %}
             <button type="submit" id="submit-button">Generuj PDF</button>
             {% comment %} <a href="{% url 'protocol' szkola %}"> {% endcomment %}
         </form>
@@ -351,14 +355,18 @@
             wyn_zastrzezenia.style.display = 'block';
         });
         const submitButton = document.getElementById('submit-button');
+        const selectedDate = document.getElementById('selected_date');
+        
         submitButton.addEventListener('click', () => {
-            if (!exactMatchFound) {
+            {% comment %} selectedDate.value = document.getElementById('data_odbioru').value; {% endcomment %}
+            {% comment %} if (!exactMatchFound) {
                 alert("Szkoła o podanej nazwie nie istnieje w bazie danych. Wybierz szkołę z listy.");
                 return;
-            }
+            } {% endcomment %}
             
             document.querySelector('form').submit();
         });
+        
     </script>
 </body>
 </html>

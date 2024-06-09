@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import HiWorld,load_schools_from_csv,schools, pdf_view #, wybor_szkoly,  wybor_szkoly2,
+from .views import HiWorld,load_schools_from_csv,schools, pdf_view#, GeneratePDFView #, wybor_szkoly,  wybor_szkoly2,
 from .views import ProtocolView, SchoolSelectionView
 
 
@@ -13,4 +13,5 @@ urlpatterns = [
     path('schools/', schools, name='schools'),
     path('pdf_view', pdf_view, name='pdf_view'),
     path('protocol/<str:school_name>/', ProtocolView.as_view(), name='protocol_pdf'),
+    # path('generate_pdf/', GeneratePDFView.as_view(), name='generate_pdf'),
 ]

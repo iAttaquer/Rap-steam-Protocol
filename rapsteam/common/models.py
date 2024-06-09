@@ -37,7 +37,7 @@ class School(models.Model):
     equipment = models.ManyToManyField('Equipment', through='SchoolEquipment', verbose_name="Sprzęt")
 
     def __str__(self):
-        return self.school_name
+        return f'{self.school_name} ({self.address.city})'
 
     class Meta:
         verbose_name = 'Szkoła'
