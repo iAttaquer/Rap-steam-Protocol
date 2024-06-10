@@ -27,38 +27,37 @@ class SchoolSelectionView(View):
     def get(self, request, *args, **kwargs):
         if 'search' in request.GET:
             search_term = request.GET.get('search')
-            szkola_istnieje = School.objects.filter(school_name__icontains=search_term).exists()
-            return JsonResponse({'exists': szkola_istnieje})
+            school_exists = School.objects.filter(school_name__icontains=search_term).exists()
+            return JsonResponse({'exists': school_exists})
 
-        lista_szkol = School.objects.all()
-        return render(request, 'index.html', {'lista_szkol': lista_szkol})
+        schools_list = School.objects.all()
+        return render(request, 'index.html', {'schools_list': schools_list})
 
     def post(self, request, *args, **kwargs):
-        nazwa_szkoly = request.POST.get('szkola', '')
-        nazwa_miasta = request.POST.get('miasto', '')
-        if nazwa_szkoly:
+        school_name = request.POST.get('school-name', '')
+        city = request.POST.get('city', '')
+        if school_name:
             try:
-                szkola = School.objects.filter(school_name=nazwa_szkoly)
-                szkola = szkola.filter(address__city=nazwa_miasta).first()
-                print(szkola)
-                request.session['nazwa_szkoly'] = nazwa_szkoly
+                school = School.objects.filter(school_name=school_name)
+                school = school.filter(address__city=school_name).first()
+                request.session['school_name'] = school_name
 
-                adres_szkoly = szkola.address
-                miasto = adres_szkoly.city
-                ulica = adres_szkoly.street
-                numer = adres_szkoly.house_number
+                school_address = school.address
+                city = school_address.city
+                street = school_address.street
+                number = school_address.house_number
 
-                sprzet_szkolny = []
-                for sprzet in SchoolEquipment.objects.filter(school=szkola):
-                    sprzet.serial_numbers_list = sprzet.serial_numbers.split(',')
-                    sprzet_szkolny.append(sprzet)
+                school_equipment = []
+                for equip in SchoolEquipment.objects.filter(school=school):
+                    equip.serial_numbers_list = equip.serial_numbers.split(',')
+                    school_equipment.append(equip)
 
                 return render(request, 'wybor_szkoly2.html', {
-                    'nazwa_szkoly': nazwa_szkoly,
-                    'miasto': miasto,
-                    'ulica': ulica,
-                    'numer': numer,
-                    'sprzet_szkolny': sprzet_szkolny,
+                    'school_name': school_name,
+                    'city': city,
+                    'street': street,
+                    'number': number,
+                    'school_equipment': school_equipment,
                 })
             except School.DoesNotExist:
                 return redirect('wybor_szkoly')
@@ -67,24 +66,24 @@ class SchoolSelectionView(View):
 
 class ProtocolView(View):
     def get(self, request, school_name, *args, **kwargs):
-        school_city = request.GET.get("miasto", '')
+        school_city = request.GET.get("city", '')
         school = School.objects.filter(school_name=school_name)
         school = school.filter(address__city=school_city).first()
         receipt_date = request.GET.get("selected-date", '')
         receipt_date = datetime.strptime(receipt_date, "%Y-%m-%d").strftime("%d.%m.%Y")
         contract_number = request.GET.get("selected-contract-number", '')
-        
-        kompl_realizacji = request.GET.get('kompl_tak') or request.GET.get('kompl_nie')
-        
-        zastrzezenia_kompl = request.GET.get('zastrz_kompl')
-        zgodnosc_jakosci = request.GET.get('zgod_tak') or request.GET.get('zgod_nie')
-        zastrzezenia_zgod = request.GET.get('zastrz_zgod')
-        termin_wykonania = request.GET.get('term_tak') or request.GET.get('term_nie')
-        zastrzezenia_term = request.GET.get('zastrz_term')
-        kolejny_termin = request.GET.get('kole_tak') or request.GET.get('kole_nie')
-        zastrzezenia_kole = request.GET.get('zastrz_kole')
-        wynik_odbioru = request.GET.get('wyn_tak') or request.GET.get('wyn_nie')
-        zastrzezenia_wyn = request.GET.get('zastrz_wyn')
+        completeness_yes = request.GET.get("selected-completeness-yes")
+        completeness_no = request.GET.get("selected-completeness-no")
+        caveats_completeness = request.GET.get("selected-caveats-completeness", '')
+        compliance_yes = request.GET.get("selected-compliance-yes")
+        compliance_no = request.GET.get("selected-compliance-no")
+        caveats_compliance = request.GET.get("selected-caveats-compliance", '')
+        term_yes = request.GET.get("selected-term-yes")
+        term_no = request.GET.get("selected-term-no")
+        caveats_term = request.GET.get("selected-caveats-term", '')
+        result_yes = request.GET.get("selected-result-yes")
+        result_no = request.GET.get("selected-result-no")
+        caveats_result = request.GET.get("selected-caveats-result", '')
         
         school_equipment = SchoolEquipment.objects.filter(school=school)
         equipment_with_data = []
@@ -97,7 +96,6 @@ class ProtocolView(View):
                 'delivery_status': delivery_status,
                 'comment': comment,
             })
-        print(equipment_with_data)
         settings = Settings.objects.last()
         logo_path = settings.pdf_protocol_logo.path if settings.pdf_protocol_logo else None
         
@@ -111,22 +109,21 @@ class ProtocolView(View):
             "director": f"{school.director.first_name} {school.director.last_name}",
             "logo": logo_path,
             "font": settings.pdf_protocol_font.url if settings.pdf_protocol_font else None,
-            'receipt_date': receipt_date,
-            'contract_number': contract_number,
-            'kompl_realizacji': kompl_realizacji,
-            'zastrzezenia_kompl': zastrzezenia_kompl,
-            'zgodnosc_jakosci': zgodnosc_jakosci,
-            'zastrzezenia_zgod': zastrzezenia_zgod,
-            'termin_wykonania': termin_wykonania,
-            'zastrzezenia_term': zastrzezenia_term,
-            'kolejny_termin': kolejny_termin,
-            'zastrzezenia_kole': zastrzezenia_kole,
-            'wynik_odbioru': wynik_odbioru,
-            'zastrzezenia_wyn': zastrzezenia_wyn,
-            'school_equipment': equipment_with_data,  # Przekazujemy listę sprzętu z danymi
+            "receipt_date": receipt_date,
+            "contract_number": contract_number,
+            "completeness_yes": completeness_yes,
+            "completeness_no": completeness_no,
+            "caveats_completeness": caveats_completeness,
+            "compliance_yes": compliance_yes,
+            "compliance_no": compliance_no,
+            "caveats_compliance": caveats_compliance,
+            "term_yes": term_yes,
+            "term_no": term_no,
+            "caveats_term": caveats_term,
+            "result_yes": result_yes,
+            "result_no": result_no,
+            "school_equipment": equipment_with_data,
         }
-        # print(context_dict)
-        context = {'key': 'value'}
         return render_to_pdf("protocol_pdf.html", context_dict)
 
     def post(self, request, school_name, *args, **kwargs):
@@ -280,7 +277,7 @@ def render_to_pdf(template_src, context_dict):
     html = template.render(context_dict)
     # print("HTML content:", html)
     result = BytesIO()
-    pdf = pisa.pisaDocument(BytesIO(html.encode("utf-8")), result, encoding='UTF-8')
+    pdf = pisa.pisaDocument(BytesIO(html.encode("utf-8")), result, encoding='UTF-8', path=context_dict['font'])
     if pdf.err:
         return HttpResponse("Invalid PDF", status_code=400, content_type='text/plain')
     return HttpResponse(result.getvalue(), content_type='application/pdf')

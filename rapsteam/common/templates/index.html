@@ -136,16 +136,16 @@
                 <input type="text" id="search-box" placeholder="Wyszukaj szkołe">
                 <button id="clear-button">×</button>
                 <ul id="school-list">
-                    {% for szkola in lista_szkol %}
-                        <li data-school-name="{{ szkola }}">{{ szkola }}</li>
+                    {% for school in schools_list %}
+                        <li data-school-name="{{ szkola }}">{{ school }}</li>
                     {% endfor %}
                 </ul>
             </div>
             
             <form action="{% url 'wybor_szkoly2' %}" method="post">
                 {% csrf_token %}
-                <input type="hidden" id="selected-school-name" name="szkola">
-                <input type="hidden" id="selected-school-city" name="miasto">
+                <input type="hidden" id="selected-school-name" name="school-name">
+                <input type="hidden" id="selected-school-city" name="city">
                 <button type="submit" id="submit-button">Dalej</button>
             </form>
             <button id="pdfButton">Podgląd PDF</button>

@@ -68,9 +68,9 @@ class Settings(models.Model):
                                            verbose_name="Powiat")
     csv_string_commune = models.CharField(max_length=255, blank=True, null=True, default="Gmina", verbose_name="Gmina")
     pdf_protocol_logo = models.ImageField(upload_to='public/uploads/', blank=True, null=True,
-                                          verbose_name='Czcionka protokołu PDF')
+                                          verbose_name='Logo protokołu PDF')
     pdf_protocol_font = models.FileField(upload_to='public/uploads/', blank=True, null=True,
-                                         verbose_name='Logo protokołu PDF')
+                                         verbose_name='Czcionka protokołu PDF')
 
     class Meta:
         verbose_name = "Ustawienie"
