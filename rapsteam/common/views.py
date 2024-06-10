@@ -39,7 +39,7 @@ class SchoolSelectionView(View):
         if school_name:
             try:
                 school = School.objects.filter(school_name=school_name)
-                school = school.filter(address__city=school_name).first()
+                school = school.filter(address__city=city).first()
                 request.session['school_name'] = school_name
 
                 school_address = school.address
