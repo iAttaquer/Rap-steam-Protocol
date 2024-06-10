@@ -1,52 +1,121 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PDF Template</title>
     <style>
+        body {
+            font-family: Times, Jost, sans-serif;
+            font-size: 13px;
+        }
+        .today {
+            text-align: right;
+            align-items: right;
+        }
+        .title {
+            display: flex;
+            text-align: center;
+        }
+        .under {
+            margin-left: 40px;
+            margin-top: -8px;
+            font-size: 11px;
+        }
+        table {
+            border-spacing: 8px;
+            border-collapse: collapse;
+            margin-top: 10px;
+            width: content;
+            left: 0;
+        }
+        table th {
+            height: 25px;
+        }
+        table td, th {
+            border: 1px solid black;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
-    <h1>Protokół odbioru</h1>
+    <div class="today">
+        <p>{{ city }}, dnia {{ today_date }} r.</p>
+    </div>
+    <div class="title">
+        <h1>Protokół odbioru sprzętu</h1>
+    </div>
     {% if logo %}
         <img src="{{ logo }}" alt="Logo">
-    {% else %}
-        <p>Logoo</p>
     {% endif %}
     <div class="section">
-        <h2>Szkoła: {{ school_name }}</h2>
+        <p>
+            <strong>
+                1. Miejsce odbioru:&nbsp;&nbsp;&nbsp;
+                {{ school_name }}, {{ city }}{{ street }} {{ house_number }}
+            </strong>
+        </p>
     </div>
-    
-    {% comment %} <p>Adres: {{ school_address }}</p> {% endcomment %}
-    {% comment %} <p>Dyrektor: {{ director }}</p> {% endcomment %}
-    {% comment %} <p>Data odbioru: {{data_odbioru }}</p> {% endcomment %}
-    {% comment %} <p>Br umowy: {{ nr_umowy }}</p> {% endcomment %}
-
-    <h3>Zamawiany sprzęt:</h3>
+    <div class="section">
+        <p>
+            <strong>
+                2. Data odbioru:&nbsp;&nbsp;&nbsp; {{ today_date }} r.
+            </strong>
+        </p>
+    </div>
+    <div class="section">
+        <p style="margin-bottom: -5px; padding: 0px;">
+            <strong>
+                3. Ze strony wykonawcy:
+            </strong><br>
+            .....................................................................................
+        </p>
+        <p class="under"><i>(imię i nazwisko osoby upoważnionej)</i></p>
+    </div>
+    <div class="section">
+        <p>
+            <strong>
+                4. Ze strony Zamawiającego: {{ school_name }}, {{ city }}{{ street }} {{ house_number }}
+                <br>Komisja w składzie:
+            </strong>
+            <br>1. ................................................
+            <br>2. ................................................
+            <br>3. ................................................
+            <br>4. ................................................
+            <br>5. ................................................
+        </p>
+        <p class="under"><i></i></p>
+    </div>
+    <div class="section">
+        <p>
+            <strong>
+                3. Przedmiotem/ami odbioru w ramach Umowy nr: &nbsp;&nbsp;{{ contract_number }}&nbsp;&nbsp; jest/są:
+            </strong>
+        </p>
+    </div>
     <table>
-        <thead>
-            <tr>
-                <th>Lp.</th>
-                <th>Nazwa przedmiotu</th>
-                <th>Ilość</th>
-                <th>Numery seryjne</th>
-                <th>Status dostarczenia</th>
-                <th>Uwagi</th>
-            </tr>
-        </thead>
-        {% comment %} <tbody>
-            {% for item in sprzet_szkolny %}
-            <tr>
-                <td>{{ forloop.counter }}</td>
-                <td>{{ item.sprzet.equipment.name }}</td>
-                <td>{{ item.sprzet.quantity }}</td>
-                <td>{{ item.sprzet.serial_numbers }}</td>
-                <td>{{ item.status_dostarczenia }}</td>
-                <td>{{ item.uwagi }}</td>
-            </tr>
-            {% endfor %}
-        </tbody> {% endcomment %}
+        <tr>
+            <th style="width: 4%">Lp</th>
+            <th style="width: 24%">Nazwa przedmiotu</th>
+            <th style="width: 6%">Ilość</th>
+            <th style="width: 15%">Nr Seryjny</th>
+            <th style="width: 20%">Świadectwo jakości</th>
+            <th style="width: 30%">Uwagi</th>
+        </tr>
+        {% for item in school_equipment %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ item.equip.equipment.name }}</td>
+            <td>{{ item.equip.quantity }}</td>
+            <td style="padding: 2px">
+                {% for number in item.equip.serial_numbers_list %}
+                {{ number }}<br>
+                {% endfor %}
+            </td>
+            <td>{{ item.delivery_status }}</td>
+            <td>{{ item.comment }}</td>
+        </tr>
+        {% endfor %}
     </table>
 </body>
 </html>

@@ -53,7 +53,7 @@
         #date td:first-child {
             width: 120px;
         }
-        #nr_umowy td:first-child {
+        #contract-nb td:first-child {
             width: 160px;
         }
         #komplet td:first-child {
@@ -95,7 +95,7 @@
             border: 1px solid black;
             text-align: center;
         }
-        #uwagi {
+        .comments {
             border: none;
             outline: none;
         }
@@ -154,9 +154,7 @@
                 <tr>
                     <td>Wybierz datę:</td>
                     <td>
-                        <form>
-                            <input class="input" type="date" id="data_odbioru" name="data_odbioru">
-                        </form>
+                        <input class="input" type="date" id="receipt-date" name="receipt-date">
                     </td>
                 </tr>
             </table>
@@ -164,11 +162,11 @@
         <div class="block-rect">
             <h3>3. Nr umowy:</h3>
             <hr>
-            <table id="nr_umowy">
+            <table id="contract-nb">
                 <tr>
                     <td>Podaj numer umowy:</td>
                     <td>
-                        <input class="input" type="text" id="nr_umowy" name="nr_umowy">
+                        <input class="input" type="text" id="contract-number" name="contract-number">
                     </td>
                 </tr>
             </table>
@@ -266,28 +264,33 @@
                         {% endfor %}
                     </td>
                     <td>
-                        <select name="status_dostarczenia_{{ forloop.counter }}" id="status_dostarczenia_{{ forloop.counter }}">
+                        <select name="delivery-status-{{ forloop.counter }}" id="delivery-status-{{ forloop.counter }}" value="">
                             <option value="dostarczono">dostarczono</option>
                             <option value="nie_dostarczono">nie dostarczono</option>
                         </select>
                     </td>
-                    <td><textarea name="" id="uwagi" cols="" rows="2" tabindex="0"></textarea></td>
+                    <td><textarea class="comments" name="comment-{{ forloop.counter }}" id="comment-{{ forloop.counter }}" cols="" rows="2" tabindex="0"></textarea></td>
                 </tr>
                 {% endfor %}
             </table>
         </div>
         <form action="{% url 'protocol_pdf' nazwa_szkoly %}" method="get">
             {% csrf_token %}
-            {% comment %} <input type="hidden" name="nazwa_szkoly" value="{{ nazwa_szkoly }}">
             <input type="hidden" name="miasto" value="{{ miasto }}">
-            <input type="hidden" name="ulica" value="{{ ulica }}">
-            <input type="hidden" name="numer" value="{{ numer }}"> {% endcomment %}
-            {% comment %} <input type="hidden" id="selected_date" name="date"> {% endcomment %}
+            <input type="hidden" id="selected-date" name="selected-date">
+            <input type="hidden" id="selected-contract-number" name="selected-contract-number">
+            {% for equipment in sprzet_szkolny %}
+            <input type="hidden" id="selected-delivery-status-{{ forloop.counter }}" name="selected-delivery-status-{{ forloop.counter }}" value="dostarczono">
+            <input type="hidden" id="typed-comment-{{ forloop.counter }}" name="typed-comment-{{ forloop.counter }}" value="">
+            {% endfor %}
             <button type="submit" id="submit-button">Generuj PDF</button>
-            {% comment %} <a href="{% url 'protocol' szkola %}"> {% endcomment %}
         </form>
     </div>
     <script>
+        const receiptDate = document.getElementById('receipt-date');
+        const selectedDate = document.getElementById('selected-date');
+        const contractNumber = document.getElementById('contract-number');
+        const selectedContractNumber = document.getElementById('selected-contract-number');
         const kompl_tak = document.querySelector('input[name="kompl_tak"][value="kompl_tak"]');
         const kompl_nie = document.querySelector('input[name="kompl_nie"][value="kompl_nie"]');
         const kompl_zastrzezenia = document.getElementById('zastrz_kompl');
@@ -308,6 +311,39 @@
         term_zastrzezenia.style.display = 'none';
         kole_zastrzezenia.style.display = 'none';
         wyn_zastrzezenia.style.display = 'none';
+
+        receiptDate.addEventListener('input', () => {
+            selectedDate.value = receiptDate.value;
+        });
+
+        contractNumber.addEventListener('input', () => {
+            selectedContractNumber.value = contractNumber.value;
+        });
+
+        const commentTextareasIds = [];
+        const commentIds = [];
+        const deliveryStatusIds = [];
+        const selectedDeliveryStatusIds = [];
+        {% for x in sprzet_szkolny %}
+        deliveryStatusIds.push('delivery-status-{{ forloop.counter }}');
+        selectedDeliveryStatusIds.push('selected-delivery-status-{{ forloop.counter }}');
+        commentTextareasIds.push('comment-{{ forloop.counter }}');
+        commentIds.push('typed-comment-{{ forloop.counter }}');
+        {% endfor %}
+        const deliveryStatus = deliveryStatusIds.map(id => document.getElementById(id));
+        const selectedDeliveryStatus = selectedDeliveryStatusIds.map(id => document.getElementById(id));
+        const commentTextareas = commentTextareasIds.map(id => document.getElementById(id));
+        const comment = commentIds.map(id => document.getElementById(id));
+        deliveryStatus.forEach((deliverys, index) => {
+            deliverys.addEventListener('change', () => {
+                selectedDeliveryStatus[index].value = deliverys.value;
+            });
+        });
+        commentTextareas.forEach((textarea, index) => {
+            textarea.addEventListener('input', () => {
+                comment[index].value = textarea.value;
+            });
+        });
 
         kompl_tak.addEventListener('click', () => {
             kompl_nie.checked = false;
@@ -355,7 +391,7 @@
             wyn_zastrzezenia.style.display = 'block';
         });
         const submitButton = document.getElementById('submit-button');
-        const selectedDate = document.getElementById('selected_date');
+        
         
         submitButton.addEventListener('click', () => {
             {% comment %} selectedDate.value = document.getElementById('data_odbioru').value; {% endcomment %}
