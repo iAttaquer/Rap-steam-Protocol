@@ -13,7 +13,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            width: 100%;
+            
             padding: 0;
             min-height: 100%;
             background-color: #F5F7FA;
@@ -153,9 +153,8 @@
                         {% endfor %}
                     </ul>
                 </div>
-                    
-                    {% comment %} <input type="hidden" id="selected-school-name" name="school-name">
-                    <input type="hidden" id="selected-school-city" name="city"> {% endcomment %}
+                    <input type="hidden" id="selected-school-name" name="school-name">
+                    <input type="hidden" id="selected-school-city" name="city">
                     <button type="submit" id="submit-button">Dalej</button>
 
                 <button id="pdfButton">Podgląd PDF</button>
@@ -270,7 +269,6 @@
                 alert("Szkoła o podanej nazwie nie istnieje w bazie danych. Wybierz szkołę z listy.");
                 return;
             }
-            
             document.querySelector('form').submit();
         });
 

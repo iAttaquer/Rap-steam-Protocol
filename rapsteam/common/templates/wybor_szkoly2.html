@@ -14,7 +14,16 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            padding-top: 0;
+            min-height: 100%;
+            background-color: #F5F7FA;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             padding-top: 100px;
+            width: 100%;
             min-height: 100%;
             background-color: #F5F7FA;
         }
@@ -122,317 +131,249 @@
 </head>
 <body>
     <div class="container">
-        <div class="block-rect">
-            <h3>1. Miejsce odbioru:</h3>
-            <hr>
-            <table id="place">
-                <tr>
-                    <td>Nazwa szkoły:</td>
-                    <td>{{ school_name }}</td>
-                </tr>
-                <tr>
-                    <td>Miejscowość:</td>
-                    <td>{{ city }}</td>
-                </tr>
-                <tr>
-                    <td>Ulica:</td>
-                    <td>{{ street }}</td>
-                </tr>
-                <tr>
-                    <td>Numer:</td>
-                    <td>{{ number }}</td>
-                </tr>
-            </table>
-        </div>
-        <div class="block-rect">
-            <h3>2. Data odbioru:</h3>
-            <hr>
-            <table id="date">
-                <tr>
-                    <td>Wybierz datę:</td>
-                    <td>
-                        <input class="input" type="date" id="receipt-date" name="receipt-date">
-                    </td>
-                </tr>
-            </table>
-        </div>
-        <div class="block-rect">
-            <h3>3. Nr umowy:</h3>
-            <hr>
-            <table id="contract-nb">
-                <tr>
-                    <td>Podaj numer umowy:</td>
-                    <td>
-                        <input class="input" type="text" id="contract-number" name="contract-number">
-                    </td>
-                </tr>
-            </table>
-        </div>
-        <div class="block-rect">
-            <h3>4. Zamawiany sprzęt:</h3>
-            <hr>
-            <table id="przedmioty">
-                <tr>
-                    <th style="width: 4%">Lp</th>
-                    <th style="width: 25%">Nazwa przedmiotu</th>
-                    <th style="width: 5%">Ilość</th>
-                    <th style="width: 15%">Nr Seryjny</th>
-                    <th style="width: 15%">Świadectwo jakości</th>
-                    <th style="width: 35%">Uwagi</th>
-                </tr>
-                {% for equip in school_equipment %}
-                <tr>
-                    <td>{{ forloop.counter }}</td>
-                    <td>{{ equip.equipment.name }}</td>
-                    <td>{{ equip.quantity }}</td>
-                    <td style="padding: 2px">
-                        {% for serial_number in equip.serial_numbers_list %}
-                        {{ serial_number }}<br>
-                        {% endfor %}
-                    </td>
-                    <td>
-                        <select name="delivery-status-{{ forloop.counter }}" id="delivery-status-{{ forloop.counter }}" value="">
-                            <option value="dostarczono">dostarczono</option>
-                            <option value="nie dostarczono">nie dostarczono</option>
-                        </select>
-                    </td>
-                    <td><textarea class="comments" name="comment-{{ forloop.counter }}" id="comment-{{ forloop.counter }}" cols="" rows="2" tabindex="0"></textarea></td>
-                </tr>
-                {% endfor %}
-            </table>
-        </div>
-        <div class="block-rect">
-            <h3>5. Potwierdzenie kompletności realizacji przedmiotu Umowy:</h3>
-            <hr>
-            <table id="completeness">
-                <tr>
-                    <td><input type="radio" name="completeness-yes" value=""> TAK</td>
-                </tr>
-                <tr>
-                    <td><input type="radio" name="completeness-no" value=""> NIE - zastrzeżenia:</td>
-                    <td><textarea name="caveats-completeness" id="caveats-completeness" cols="" rows="3"></textarea></td>
-                </tr>
-            </table>
-        </div>
-        <div class="block-rect">
-            <h3>6. Potwierdzenie zgodności jakości przyjmowanego przedmiotu Umowy:</h3>
-            <hr>
-            <table id="compatibility">
-                <tr>
-                    <td><input type="radio" name="compliance-yes" value=""> zgodne</td>
-                </tr>
-                <tr>
-                    <td><input type="radio" name="compliance-no" value=""> niezgodne - zastrzeżenia: </td>
-                    <td><textarea name="caveats-compliance" id="caveats-compliance" cols="" rows="3"></textarea></td>
-                </tr>
-            </table>
-        </div>
-        <div class="block-rect">
-            <h3>7. Termin wykonania Umowy:</h3>
-            <hr>
-            <table id="deadline">
-                <tr>
-                    <td><input type="radio" name="term-yes" value="term-yes"> zgodny z Umową</td>
-                </tr>
-                <tr>
-                    <td><input type="radio" name="term-no" value="term-no"> niezgodny z Umową - zastrzeżenia: </td>
-                    <td><textarea name="caveats-term" id="caveats-term" cols="" rows="3"></textarea></td>
-                </tr>
-            </table>
-        </div>
-        <div class="block-rect">
-            <h3>8. Końcowy wynik odbioru:</h3>
-            <hr>
-            <table id="result">
-                <tr>
-                    <td><input type="radio" name="result-yes" value="result-yes"> pozytywny</td>
-                </tr>
-                <tr>
-                    <td><input type="radio" name="result-no" value="result-no"> negatywny - zastrzeżenia: </td>
-                    <td><textarea name="caveats-result" id="caveats-result" cols="" rows="3"></textarea></td>
-                </tr>
-            </table>
-        </div>
-        <div class="block-rect">
-            <h3>9. Podpisy:</h3>
-            <hr>
-            <p style="margin: 5px;">Podpisy będą dostępne do uzupełnienia ręcznie po wydrukowaniu.</p>
-        </div>
-        
         <form action="{% url 'protocol_pdf' school_name %}" method="get">
             {% csrf_token %}
+            <div class="block-rect">
+                <h3>1. Miejsce odbioru:</h3>
+                <hr>
+                <table id="place">
+                    <tr>
+                        <td>Nazwa szkoły:</td>
+                        <td>{{ school_name }}</td>
+                    </tr>
+                    <tr>
+                        <td>Miejscowość:</td>
+                        <td>{{ city }}</td>
+                    </tr>
+                    <tr>
+                        <td>Ulica:</td>
+                        <td>{{ street }}</td>
+                    </tr>
+                    <tr>
+                        <td>Numer:</td>
+                        <td>{{ number }}</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="block-rect">
+                <h3>2. Data odbioru:</h3>
+                <hr>
+                <table id="date">
+                    <tr>
+                        <td>Wybierz datę:</td>
+                        <td>
+                            <input class="input" type="date" id="receipt-date" name="receipt-date">
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="block-rect">
+                <h3>3. Nr umowy:</h3>
+                <hr>
+                <table id="contract-nb">
+                    <tr>
+                        <td>Podaj numer umowy:</td>
+                        <td>
+                            <input class="input" type="text" id="contract-number" name="contract-number">
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="block-rect">
+                <h3>4. Zamawiany sprzęt:</h3>
+                <hr>
+                <table id="przedmioty">
+                    <tr>
+                        <th style="width: 4%">Lp</th>
+                        <th style="width: 25%">Nazwa przedmiotu</th>
+                        <th style="width: 5%">Ilość</th>
+                        <th style="width: 15%">Nr Seryjny</th>
+                        <th style="width: 15%">Świadectwo jakości</th>
+                        <th style="width: 35%">Uwagi</th>
+                    </tr>
+                    {% for equip in school_equipment %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ equip.equipment.name }}</td>
+                        <td>{{ equip.quantity }}</td>
+                        <td style="padding: 2px">
+                            {% for serial_number in equip.serial_numbers_list %}
+                            {{ serial_number }}<br>
+                            {% endfor %}
+                        </td>
+                        <td>
+                            <select name="delivery-status-{{ forloop.counter }}" id="delivery-status-{{ forloop.counter }}" value="dostarczono">
+                                <option value="dostarczono">dostarczono</option>
+                                <option value="nie dostarczono">nie dostarczono</option>
+                            </select>
+                        </td>
+                        <td><textarea class="comments" name="comment-{{ forloop.counter }}" id="comment-{{ forloop.counter }}" cols="" rows="2" tabindex="0"></textarea></td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+            <div class="block-rect">
+                <h3>5. Potwierdzenie kompletności realizacji przedmiotu Umowy:</h3>
+                <hr>
+                <table id="completeness">
+                    <tr>
+                        <td><input type="radio" name="completeness-yes" value=""> TAK</td>
+                    </tr>
+                    <tr>
+                        <td><input type="radio" name="completeness-no" value=""> NIE - zastrzeżenia:</td>
+                        <td><textarea name="caveats-completeness" id="caveats-completeness" cols="" rows="3"></textarea></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="block-rect">
+                <h3>6. Potwierdzenie zgodności jakości przyjmowanego przedmiotu Umowy:</h3>
+                <hr>
+                <table id="compatibility">
+                    <tr>
+                        <td><input type="radio" name="compliance-yes" value=""> zgodne</td>
+                    </tr>
+                    <tr>
+                        <td><input type="radio" name="compliance-no" value=""> niezgodne - zastrzeżenia: </td>
+                        <td><textarea name="caveats-compliance" id="caveats-compliance" cols="" rows="3"></textarea></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="block-rect">
+                <h3>7. Termin wykonania Umowy:</h3>
+                <hr>
+                <table id="deadline">
+                    <tr>
+                        <td><input type="radio" name="term-yes" value=""> zgodny z Umową</td>
+                    </tr>
+                    <tr>
+                        <td><input type="radio" name="term-no" value=""> niezgodny z Umową - zastrzeżenia: </td>
+                        <td><textarea name="caveats-term" id="caveats-term" cols="" rows="3"></textarea></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="block-rect">
+                <h3>8. Końcowy wynik odbioru:</h3>
+                <hr>
+                <table id="result">
+                    <tr>
+                        <td><input type="radio" name="result-yes" value=""> pozytywny</td>
+                    </tr>
+                    <tr>
+                        <td><input type="radio" name="result-no" value=""> negatywny - zastrzeżenia: </td>
+                        <td><textarea name="caveats-result" id="caveats-result" cols="" rows="3"></textarea></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="block-rect">
+                <h3>9. Podpisy:</h3>
+                <hr>
+                <p style="margin: 5px;">Podpisy będą dostępne do uzupełnienia ręcznie po wydrukowaniu.</p>
+            </div>
+
             <input type="hidden" name="city" value="{{ city }}">
-            <input type="hidden" id="selected-date" name="selected-date">
-            <input type="hidden" id="selected-contract-number" name="selected-contract-number">
-            {% for equipment in school_equipment %}
-            <input type="hidden" id="selected-delivery-status-{{ forloop.counter }}" name="selected-delivery-status-{{ forloop.counter }}" value="dostarczono">
-            <input type="hidden" id="typed-comment-{{ forloop.counter }}" name="typed-comment-{{ forloop.counter }}" value="">
-            {% endfor %}
-            <input type="hidden" id="selected-completeness-yes" name="selected-completeness-yes" value="">
-            <input type="hidden" id="selected-completeness-no" name="selected-completeness-no" value="">
-            <input type="hidden" id="selected-caveats-completeness" name="selected-ceveats-completeness" value="">
-            <input type="hidden" id="selected-compliance-yes" name="selected-compliance-yes" value="">
-            <input type="hidden" id="selected-compliance-no" name="selected-compliance-no" value="">
-            <input type="hidden" id="selected-caveats-compliance" name="selected-caveats-compliance" value="">
-            <input type="hidden" id="selected-term-yes" name="selected-term-yes" value="">
-            <input type="hidden" id="selected-term-no" name="selected-term-no" value="">
-            <input type="hidden" id="selected-caveats-term" name="selected-caveats-term" value="">
-            <input type="hidden" id="selected-result-yes" name="selected-result-yes" value="">
-            <input type="hidden" id="selected-result-no" name="selected-result-no" value="">
-            <input type="hidden" id="selected-caveats-result" name="selected-caveats-result" value="">
-            <button type="submit" id="submit-button">Generuj PDF</button>
+            <button type="button" id="submit-button">Generuj PDF</button>
         </form>
     </div>
     <script>
         const receiptDate = document.getElementById('receipt-date');
-        const selectedDate = document.getElementById('selected-date');
         const contractNumber = document.getElementById('contract-number');
-        const selectedContractNumber = document.getElementById('selected-contract-number');
         const completenessYes = document.querySelector('input[name="completeness-yes"]');
         const completenessNo = document.querySelector('input[name="completeness-no"]');
         const caveatsCompleteness = document.getElementById('caveats-completeness');
-        const selectedCompletenessYes = document.querySelector('input[name="selected-completeness-yes"]');
-        const selectedCompletenessNo = document.querySelector('input[name="selected-completeness-no"]');
-        const selectedCaveatsCompleteness = document.getElementById('selected-caveats-completeness');
         const complianceYes = document.querySelector('input[name="compliance-yes"]');
         const complianceNo = document.querySelector('input[name="compliance-no"]');
         const caveatsCompliance = document.getElementById('caveats-compliance');
-        const selectedComplianceYes = document.querySelector('input[name="selected-compliance-yes"]');
-        const selectedComplianceNo = document.querySelector('input[name="selected-compliance-no"]');
-        const selectedCaveatsCompliance = document.getElementById('selected-caveats-compliance');
         const termYes = document.querySelector('input[name="term-yes"]');
         const termNo = document.querySelector('input[name="term-no"]');
         const caveatsTerm = document.getElementById('caveats-term');
-        const selectedTermYes = document.querySelector('input[name="selected-term-yes"]');
-        const selectedTermNo = document.querySelector('input[name="selected-term-no"]');
-        const selectedCaveatsTerm = document.getElementById('selected-caveats-term');
         const resultYes = document.querySelector('input[name="result-yes"]');
         const resultNo = document.querySelector('input[name="result-no"]');
         const caveatsResult = document.getElementById('caveats-result');
-        const selectedResultYes = document.querySelector('input[name="selected-result-yes"]');
-        const selectedResultNo = document.querySelector('input[name="selected-result-no"]');
-        const selectedCaveatsResult = document.getElementById('selected-caveats-result');
 
         caveatsCompleteness.style.display = 'none';
         caveatsCompliance.style.display = 'none';
         caveatsTerm.style.display = 'none';
         caveatsResult.style.display = 'none';
 
-        receiptDate.addEventListener('input', () => {
-            selectedDate.value = receiptDate.value;
-        });
-        contractNumber.addEventListener('input', () => {
-            selectedContractNumber.value = contractNumber.value;
-        });
-        const commentTextareasIds = [];
-        const commentIds = [];
-        const deliveryStatusIds = [];
-        const selectedDeliveryStatusIds = [];
-        {% for x in school_equipment %}
-        deliveryStatusIds.push('delivery-status-{{ forloop.counter }}');
-        selectedDeliveryStatusIds.push('selected-delivery-status-{{ forloop.counter }}');
-        commentTextareasIds.push('comment-{{ forloop.counter }}');
-        commentIds.push('typed-comment-{{ forloop.counter }}');
-        {% endfor %}
-        const deliveryStatus = deliveryStatusIds.map(id => document.getElementById(id));
-        const selectedDeliveryStatus = selectedDeliveryStatusIds.map(id => document.getElementById(id));
-        const commentTextareas = commentTextareasIds.map(id => document.getElementById(id));
-        const comment = commentIds.map(id => document.getElementById(id));
-        deliveryStatus.forEach((deliverys, index) => {
-            deliverys.addEventListener('change', () => {
-                selectedDeliveryStatus[index].value = deliverys.value;
-            });
-        });
-        commentTextareas.forEach((textarea, index) => {
-            textarea.addEventListener('input', () => {
-                comment[index].value = textarea.value;
-            });
-        });
         completenessYes.addEventListener('click', () => {
             completenessNo.checked = false;
             caveatsCompleteness.style.display = 'none';
             caveatsCompleteness.value = '';
-            selectedCaveatsCompleteness.value = '';
-            selectedCompletenessYes.value = '1';
-            selectedCompletenessNo.value = '';
+            completenessYes.value = '1';
+            completenessNo.value = '';
         });
         completenessNo.addEventListener('click', () => {
             completenessYes.checked = false;
             caveatsCompleteness.style.display = 'block';
-            selectedCompletenessYes.value = '';
-            selectedCompletenessNo.value = '1';
-        });
-        caveatsCompleteness.addEventListener('input', () => {
-            selectedCaveatsCompleteness.value = caveatsCompleteness.value;
+            completenessYes.value = '';
+            completenessNo.value = '1';
         });
         complianceYes.addEventListener('click', () => {
             complianceNo.checked = false;
             caveatsCompliance.style.display = 'none';
             caveatsCompliance.value = '';
-            selectedCaveatsCompleteness.value = '';
-            selectedComplianceYes.value = '1';
-            selectedComplianceNo.value = '';
+            complianceYes.value = '1';
+            complianceNo.value = '';
         });
         complianceNo.addEventListener('click', () => {
             complianceYes.checked = false;
             caveatsCompliance.style.display = 'block';
-            selectedComplianceYes.value = '';
-            selectedComplianceNo.value = '1';
-        });
-        caveatsCompliance.addEventListener('input', () => {
-            selectedCaveatsCompliance.value = caveatsCompliance.value;
+            complianceYes.value = '';
+            complianceNo.value = '1';
         });
         termYes.addEventListener('click', () => {
             termNo.checked = false;
             caveatsTerm.style.display = 'none';
             caveatsTerm.value = '';
-            selectedCaveatsTerm.value = '';
-            selectedTermYes.value = '1';
-            selectedTermNo.value = '';
+            termYes.value = '1';
+            termNo.value = '';
         });
         termNo.addEventListener('click', () => {
             termYes.checked = false;
             caveatsTerm.style.display = 'block';
-            selectedTermYes.value = '';
-            selectedTermNo.value = '1';
-        });
-        caveatsTerm.addEventListener('input', () => {
-            selectedCaveatsTerm.value = caveatsTerm.value;
+            termYes.value = '';
+            termNo.value = '1';
         });
         resultYes.addEventListener('click', () => {
             resultNo.checked = false;
             caveatsResult.style.display = 'none';
             caveatsResult.value = '';
-            selectedCaveatsResult.value = '';
-            selectedResultYes.value = '1';
-            selectedResultNo.value = '';
+            resultYes.value = '1';
+            resultNo.value = '';
         });
         resultNo.addEventListener('click', () => {
             resultYes.checked = false;
             caveatsResult.style.display = 'block';
-            selectedResultYes.value = '';
-            selectedResultNo.value = '1';
-        });
-        caveatsResult.addEventListener('input', () => {
-            selectedCaveatsResult.value = caveatsResult.value;
+            resultYes.value = '';
+            resultNo.value = '1';
         });
 
         const submitButton = document.getElementById('submit-button');
-        
         submitButton.addEventListener('click', () => {
-            selectedDate.value = receiptDate.value;
-            selectedContractNumber.value = contractNumber.value;
-            deliveryStatus.forEach((deliverys, index) => {
-                selectedDeliveryStatus[index].value = deliverys.value;
-            });
-            commentTextareas.forEach((textarea, index) => {
-                comment[index].value = textarea.value;
-            });
-            {% comment %} if (!exactMatchFound) {
-                alert("Szkoła o podanej nazwie nie istnieje w bazie danych. Wybierz szkołę z listy.");
+            if (receiptDate.value == ''){
+                alert("Nie wybrano daty odbioru!");
                 return;
-            } {% endcomment %}
-            
+            }
+            if (contractNumber.value == '') {
+                alert("Nie wybrano numeru Umowy!");
+                return;
+            }
+            if (completenessYes.value == '' && completenessNo.value == '') {
+                alert("Nie uzupełniono potwierdzenia realizacji przedmiotu Umowy!");
+                return;
+            }
+            if (complianceYes.value == '' && complianceNo.value == '') {
+                alert("Nie uzupełniono potwierdzenia zgodności jakości przyjmowanego przedmiotu Umowy!");
+                return;
+            }
+            if (termYes.value == '' && termNo.value == '') {
+                alert("Nie uzupełniono zgodności terminu z Umową!");
+                return;
+            }
+            if (resultYes.value == '' && resultNo.value == '') {
+                alert("Nie podano końcowego wyniku odbioru!");
+                return;
+            }
             document.querySelector('form').submit();
         });
         

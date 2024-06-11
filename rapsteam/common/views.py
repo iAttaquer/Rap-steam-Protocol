@@ -8,8 +8,9 @@ from io import BytesIO
 from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseServerError, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
-from django.template.loader import get_template
+from django.template.loader import get_template, render_to_string
 from django.views import View
+from reportlab.pdfgen import canvas
 from xhtml2pdf import pisa
 import xhtml2pdf.pisa as pisa
 import os
@@ -19,9 +20,6 @@ from common.models import Address
 from common.models import School, Settings, SchoolEquipment
 
 from datetime import date, datetime
-
-def HiWorld(request):
-    return HttpResponse('Hello wordl!')
 
 class SchoolSelectionView(View):
     def get(self, request, *args, **kwargs):
@@ -69,28 +67,28 @@ class ProtocolView(View):
         school_city = request.GET.get("city", '')
         school = School.objects.filter(school_name=school_name)
         school = school.filter(address__city=school_city).first()
-        receipt_date = request.GET.get("selected-date", '')
+        receipt_date = request.GET.get("receipt-date", '')
         receipt_date = datetime.strptime(receipt_date, "%Y-%m-%d").strftime("%d.%m.%Y")
-        contract_number = request.GET.get("selected-contract-number", '')
-        completeness_yes = request.GET.get("selected-completeness-yes")
-        completeness_no = request.GET.get("selected-completeness-no")
-        caveats_completeness = request.GET.get("selected-caveats-completeness", '')
-        compliance_yes = request.GET.get("selected-compliance-yes")
-        compliance_no = request.GET.get("selected-compliance-no")
-        caveats_compliance = request.GET.get("selected-caveats-compliance", '')
-        term_yes = request.GET.get("selected-term-yes")
-        term_no = request.GET.get("selected-term-no")
-        caveats_term = request.GET.get("selected-caveats-term", '')
-        result_yes = request.GET.get("selected-result-yes")
-        result_no = request.GET.get("selected-result-no")
-        caveats_result = request.GET.get("selected-caveats-result", '')
+        contract_number = request.GET.get("contract-number", '')
+        completeness_yes = request.GET.get("completeness-yes")
+        completeness_no = request.GET.get("completeness-no")
+        caveats_completeness = request.GET.get("caveats-completeness", '')
+        compliance_yes = request.GET.get("compliance-yes")
+        compliance_no = request.GET.get("compliance-no")
+        caveats_compliance = request.GET.get("caveats-compliance", '')
+        term_yes = request.GET.get("term-yes")
+        term_no = request.GET.get("term-no")
+        caveats_term = request.GET.get("caveats-term", '')
+        result_yes = request.GET.get("result-yes")
+        result_no = request.GET.get("result-no")
+        caveats_result = request.GET.get("caveats-result", '')
         
         school_equipment = SchoolEquipment.objects.filter(school=school)
         equipment_with_data = []
         for i, equip in enumerate(school_equipment, start=1):
             equip.serial_numbers_list = equip.serial_numbers.split(',')
-            delivery_status = request.GET.get(f'selected-delivery-status-{i}', '')
-            comment = request.GET.get(f'typed-comment-{i}', '')
+            delivery_status = request.GET.get(f'delivery-status-{i}', '')
+            comment = request.GET.get(f'comment-{i}', '')
             print(comment)
             equipment_with_data.append({
                 'equip': equip,
@@ -123,6 +121,7 @@ class ProtocolView(View):
             "caveats_term": caveats_term,
             "result_yes": result_yes,
             "result_no": result_no,
+            "caveats_result": caveats_result,
             "school_equipment": equipment_with_data,
         }
         return render_to_pdf("protocol_pdf.html", context_dict)
@@ -273,12 +272,18 @@ def load_schools_from_csv(request):
 def schools(request):
     return render(request, 'schools.html')
 
+# def render_to_pdf(template_src, context_dict):
+#     template = get_template(template_src)
+#     html = render.(context_dict)
+#     html = HTML(string=html_string)
+    
+
 def render_to_pdf(template_src, context_dict):
     template = get_template(template_src)
     html = template.render(context_dict)
     # print("HTML content:", html)
     result = BytesIO()
-    pdf = pisa.pisaDocument(BytesIO(html.encode("utf-8")), result, encoding='UTF-8', path=context_dict['font'])
+    pdf = pisa.pisaDocument(BytesIO(html.encode("UTF-8")), result, encoding='UTF-8', path=context_dict['font'])
     # pdf = pisa.pisaDocument(html, result, encoding='UTF-8', path=context_dict['font'])
     if pdf.err:
         return HttpResponse("Invalid PDF", status_code=400, content_type='text/plain')
