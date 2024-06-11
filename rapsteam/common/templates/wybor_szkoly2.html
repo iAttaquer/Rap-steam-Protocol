@@ -324,12 +324,11 @@
         contractNumber.addEventListener('input', () => {
             selectedContractNumber.value = contractNumber.value;
         });
-
         const commentTextareasIds = [];
         const commentIds = [];
         const deliveryStatusIds = [];
         const selectedDeliveryStatusIds = [];
-        {% for x in sprzet_szkolny %}
+        {% for x in school_equipment %}
         deliveryStatusIds.push('delivery-status-{{ forloop.counter }}');
         selectedDeliveryStatusIds.push('selected-delivery-status-{{ forloop.counter }}');
         commentTextareasIds.push('comment-{{ forloop.counter }}');
@@ -349,7 +348,6 @@
                 comment[index].value = textarea.value;
             });
         });
-
         completenessYes.addEventListener('click', () => {
             completenessNo.checked = false;
             caveatsCompleteness.style.display = 'none';
@@ -422,7 +420,14 @@
         const submitButton = document.getElementById('submit-button');
         
         submitButton.addEventListener('click', () => {
-            
+            selectedDate.value = receiptDate.value;
+            selectedContractNumber.value = contractNumber.value;
+            deliveryStatus.forEach((deliverys, index) => {
+                selectedDeliveryStatus[index].value = deliverys.value;
+            });
+            commentTextareas.forEach((textarea, index) => {
+                comment[index].value = textarea.value;
+            });
             {% comment %} if (!exactMatchFound) {
                 alert("Szkoła o podanej nazwie nie istnieje w bazie danych. Wybierz szkołę z listy.");
                 return;

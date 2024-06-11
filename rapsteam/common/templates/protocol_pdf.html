@@ -39,7 +39,7 @@
             font-size: 11px;
         }
         table {
-            border-spacing: 8px;
+            border-spacing: 5px;
             border-collapse: collapse;
             margin-top: 10px;
             width: content;
@@ -58,6 +58,10 @@
         }
         .attachment td{
             border: none;
+            text-align: left;
+        }
+        .attachment li {
+            padding-left: 10px;
         }
     </style>
 </head>
@@ -118,100 +122,126 @@
         {% endfor %}
     </table>
     <div class="section">
-        <p>
-            <strong>
-                4. Potwierdzenie kompletności realizacji przedmiotu Umowy:
-            </strong>
-        </p>
-        <ul>
-            {% if completeness_yes %}
-            <li>Tak</li>
-            {% else %}
-            <li><s>Tak</s></li>
-            {% endif %}
-            {% if completeness_no %}
-            <li>Nie - zastrzeżenia: {{ caveats_completeness }}</li>
-            {% else %}
-            <li><s>Nie - zastrzeżenia:</s></li>
-            {% endif %}
-        </ul>
-    </div>
-    <div class="section">
-        <p>
-            <strong>
-                5. Potwierdzenie zgodności jakości przyjmowanego przedmiotu Umowy:
-            </strong>
-        </p>
-        <ul>
-            {% if compliance_yes %}
-            <li>zgodne</li>
-            {% else %}
-            <li><s>zgodne</s></li>
-            {% endif %}
-            {% if compliance_no %}
-            <li>niezgodne - zastrzeżenia: {{ caveats_compliance }}</li>
-            {% else %}
-            <li><s>niezgodne - zastrzeżenia:</s></li>
-            {% endif %}
-        </ul>
-    </div>
-    <div class="section">
-        <p>
-            <strong>
-                6. Termin wykonania Umowy:
-            </strong>
-        </p>
-        <ul>
-            {% if term_yes %}
-            <li>zgodny z Umową</li>
-            {% else %}
-            <li><s>zgodny z Umową</s></li>
-            {% endif %}
-            {% if term_no %}
-            <li>niezgodny z Umową - zastrzeżenia: {{ caveats_term }}</li>
-            {% else %}
-            <li><s>niezgodny z Umową - zastrzeżenia:</s></li>
-            {% endif %}
-        </ul>
-    </div>
-    <div class="section">
-        <p>
-            <strong>
-                7. Końcowy wynik odbioru:
-            </strong>
-        </p>
-        <ul>
-            {% if result_yes %}
-            <li>zgodny z ustaleniem</li>
-            {% else %}
-            <li><s>zgodny z ustaleniem</s></li>
-            {% endif %}
-            {% if result_no %}
-            <li>niezgodny z ustaleniem - zastrzeżenia: {{ caveats_result }}</li>
-            {% else %}
-            <li><s>niezgodny z ustaleniem - zastrzeżenia:</s></li>
-            {% endif %}
-        </ul>
-    </div>
-    <div class="section">
-        <p style="margin-bottom: 0px;">
-            <strong>
-                8. Podpisy:
-            </strong>
-        </p>
         <table class="attachment">
-            <td style="text-align: left;">
-                <p>1. ................................................</p>
-                <p>2. ................................................</p>
-                <p>3. ................................................</p>
-                <p>4. ................................................</p>
-                <p>5. ................................................</p>
-                <p class="under1"><i>(członkowie komisji odbioru)</i></p>
-            </td>
-            <td style="text-align: right;">
-                ...........................................................................
-                <p class="under2"><i>(przedstawiciel Wykonawcy)</i></p>
-            </td>
+            <tr>
+                <td>
+                    <p>
+                        <strong>
+                            4. Potwierdzenie kompletności realizacji przedmiotu Umowy:
+                        </strong>
+                    </p>
+                    <ul>
+                        {% if completeness_yes %}
+                        <li>Tak</li>
+                        {% else %}
+                        <li><s>Tak</s></li>
+                        {% endif %}
+                        {% if completeness_no %}
+                        <li>Nie - zastrzeżenia: {{ caveats_completeness }}</li>
+                        {% else %}
+                        <li><s>Nie - zastrzeżenia:</s></li>
+                        {% endif %}
+                    </ul>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="section">
+        <table class="attachment">
+            <tr>
+                <td>
+                    <p>
+                        <strong>
+                            5. Potwierdzenie zgodności jakości przyjmowanego przedmiotu Umowy:
+                        </strong>
+                    </p>
+                    <ul>
+                        {% if compliance_yes %}
+                        <li>zgodne</li>
+                        {% else %}
+                        <li><s>zgodne</s></li>
+                        {% endif %}
+                        {% if compliance_no %}
+                        <li>niezgodne - zastrzeżenia: {{ caveats_compliance }}</li>
+                        {% else %}
+                        <li><s>niezgodne - zastrzeżenia:</s></li>
+                        {% endif %}
+                    </ul>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="section">
+        <table class="attachment">
+            <tr>
+                <td>
+                    <p>
+                        <strong>
+                            6. Termin wykonania Umowy:
+                        </strong>
+                    </p>
+                    <ul>
+                        {% if term_yes %}
+                        <li>zgodny z Umową</li>
+                        {% else %}
+                        <li><s>zgodny z Umową</s></li>
+                        {% endif %}
+                        {% if term_no %}
+                        <li>niezgodny z Umową - zastrzeżenia: {{ caveats_term }}</li>
+                        {% else %}
+                        <li><s>niezgodny z Umową - zastrzeżenia:</s></li>
+                        {% endif %}
+                    </ul>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="section">
+        <table class="attachment">
+            <tr>
+                <td>
+                    <p>
+                        <strong>
+                            7. Końcowy wynik odbioru:
+                        </strong>
+                    </p>
+                    <ul>
+                        {% if result_yes %}
+                        <li>zgodny z ustaleniem</li>
+                        {% else %}
+                        <li><s>zgodny z ustaleniem</s></li>
+                        {% endif %}
+                        {% if result_no %}
+                        <li>niezgodny z ustaleniem - zastrzeżenia: {{ caveats_result }}</li>
+                        {% else %}
+                        <li><s>niezgodny z ustaleniem - zastrzeżenia:</s></li>
+                        {% endif %}
+                    </ul>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="section">
+        <table class="attachment">
+            <tr>
+                <td style="text-align: left;">
+                    <p style="margin-bottom: 0px;">
+                        <strong>
+                            8. Podpisy:
+                        </strong>
+                    </p>
+                    <p>1. ................................................</p>
+                    <p>2. ................................................</p>
+                    <p>3. ................................................</p>
+                    <p>4. ................................................</p>
+                    <p>5. ................................................</p>
+                    <p class="under1"><i>(członkowie komisji odbioru)</i></p>
+                </td>
+                <td style="text-align: right;">
+                    ...........................................................................
+                    <p class="under2"><i>(przedstawiciel Wykonawcy)</i></p>
+                </td>
+            </tr>
         </table>
     </div>
 </body>

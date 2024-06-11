@@ -13,7 +13,17 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            width: 100%;
+            padding: 0;
+            min-height: 100%;
+            background-color: #F5F7FA;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             padding-top: 100px;
+            width: 100%;
             min-height: 100%;
             background-color: #F5F7FA;
         }
@@ -130,26 +140,27 @@
 </head>
 <body>
     <div class="container">
-        <div class="block-rect">
-            <h2>Wybierz szkołę:</h2>
-            <div id="school-list-container">
-                <input type="text" id="search-box" placeholder="Wyszukaj szkołe">
-                <button id="clear-button">×</button>
-                <ul id="school-list">
-                    {% for school in schools_list %}
-                        <li data-school-name="{{ school }}">{{ school }}</li>
-                    {% endfor %}
-                </ul>
+        <form action="{% url 'wybor_szkoly2' %}" method="post">
+            {% csrf_token %}
+            <div class="block-rect">
+                <h2>Wybierz szkołę:</h2>
+                <div id="school-list-container">
+                    <input type="text" id="search-box" placeholder="Wyszukaj szkołe">
+                    <button id="clear-button">×</button>
+                    <ul id="school-list">
+                        {% for school in schools_list %}
+                            <li data-school-name="{{ school }}">{{ school }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                    
+                    {% comment %} <input type="hidden" id="selected-school-name" name="school-name">
+                    <input type="hidden" id="selected-school-city" name="city"> {% endcomment %}
+                    <button type="submit" id="submit-button">Dalej</button>
+
+                <button id="pdfButton">Podgląd PDF</button>
             </div>
-            
-            <form action="{% url 'wybor_szkoly2' %}" method="post">
-                {% csrf_token %}
-                <input type="hidden" id="selected-school-name" name="school-name">
-                <input type="hidden" id="selected-school-city" name="city">
-                <button type="submit" id="submit-button">Dalej</button>
-            </form>
-            <button id="pdfButton">Podgląd PDF</button>
-        </div>
+        </form>
     </div>
 
     <script>

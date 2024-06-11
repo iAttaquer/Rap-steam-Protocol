@@ -91,6 +91,7 @@ class ProtocolView(View):
             equip.serial_numbers_list = equip.serial_numbers.split(',')
             delivery_status = request.GET.get(f'selected-delivery-status-{i}', '')
             comment = request.GET.get(f'typed-comment-{i}', '')
+            print(comment)
             equipment_with_data.append({
                 'equip': equip,
                 'delivery_status': delivery_status,
@@ -278,6 +279,7 @@ def render_to_pdf(template_src, context_dict):
     # print("HTML content:", html)
     result = BytesIO()
     pdf = pisa.pisaDocument(BytesIO(html.encode("utf-8")), result, encoding='UTF-8', path=context_dict['font'])
+    # pdf = pisa.pisaDocument(html, result, encoding='UTF-8', path=context_dict['font'])
     if pdf.err:
         return HttpResponse("Invalid PDF", status_code=400, content_type='text/plain')
     return HttpResponse(result.getvalue(), content_type='application/pdf')
