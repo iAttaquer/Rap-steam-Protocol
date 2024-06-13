@@ -1,2 +1,4 @@
 Django==5.0.4
-xhtml2pdf==0.2.15
+#xhtml2pdf==0.2.16
+pdfkit==1.0.0
+pillow==10.3.0
