@@ -32,7 +32,7 @@ class School(models.Model):
                                  verbose_name="Dyrektor", null=True, blank=True)
 
     goods_received = models.BooleanField(default=False, null=True, blank=True, verbose_name='Otrzymane towary')
-    acceptance_protocol = models.FileField(null=True, blank=True, verbose_name='Protokół odbioru')
+    acceptance_protocol = models.FileField(upload_to='acceptance_protocols', null=True, blank=True, verbose_name='Protokół odbioru')
     
     equipment = models.ManyToManyField('Equipment', through='SchoolEquipment', verbose_name="Sprzęt")
 

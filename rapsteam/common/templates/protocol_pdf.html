@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,12 +7,12 @@
     <style>
         @font-face {
             font-family: 'MyFont';
+            src: file("{% if font %}{{ font }}{% endif %}") format('truetype');
             {% comment %} src: url("{{ font }}") format('truetype') {% endcomment %}
-            src: url("{% if font_url %}{{ font_url }}{% endif %}") format('truetype');
         }
         body {
-            font-family: Jost, MyFont;
-            font-size: 13px;
+            font-family: MyFont, Arial;
+            font-size: 14px;
         }
         .section {
             margin: 0;
@@ -19,21 +20,17 @@
         p {
             margin: 8px;
         }
-        .today {
-            text-align: right;
-            align-items: right;
-        }
         .title {
             display: flex;
             text-align: center;
         }
         .under1 {
-            margin-left: 30px;
+            margin-left: 40px;
             margin-top: -8px;
             font-size: 11px;
         }
         .under2 {
-            margin-right: 60px;
+            margin-right: 70px;
             margin-top: -8px;
             font-size: 11px;
         }
@@ -68,15 +65,23 @@
     </style>
 </head>
 <body>
-    <div class="today">
-        <p>{{ city }}, dnia {{ today_date }} r.</p>
+    <div class="section">
+        <table class="attachment">
+            <tr>
+                <td style="text-align: left;">
+                    {% if logo %}
+                    <img src="{{ logo }}" alt="Logo" width="150" height="100" style="margin: 0;">
+                    {% endif %}
+                </td>
+                <td style="text-align: right;">
+                    <p>{{ city }}, dnia {{ today_date }} r.</p>
+                </td>
+            </tr>
+        </table>
     </div>
     <div class="title">
         <h1>Protokół odbioru sprzętu</h1>
     </div>
-    {% if logo %}
-        <img src="{{ logo }}" alt="Logo">
-    {% endif %}
     <div class="section">
         <p>
             <strong>
