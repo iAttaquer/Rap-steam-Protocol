@@ -131,7 +131,7 @@
 </head>
 <body>
     <div class="container">
-        <form action="{% url 'protocol_pdf' school_name %}" method="get">
+        <form action="{% url 'protocol_pdf' school_name %}" method="post">
             {% csrf_token %}
             <div class="block-rect">
                 <h3>1. Miejsce odbioru:</h3>
@@ -271,7 +271,7 @@
             </div>
 
             <input type="hidden" name="city" value="{{ city }}">
-            <button type="button" id="submit-button">Generuj PDF</button>
+            <button type="submit" id="submit-button">Generuj PDF</button>
         </form>
     </div>
     <script>

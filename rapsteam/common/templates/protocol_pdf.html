@@ -1,17 +1,16 @@
 <!DOCTYPE html>
-<html lang="pl">
+<html lang="en">
 <head>
-    <meta http-equiv=Content-Type content="text/html;charset=utf-8">
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PDF Template</title>
     <style>
         @font-face {
             font-family: 'MyFont';
-            src: url('{{ font }}') format('truetype');
+            {% comment %} src: url("{{ font }}") format('truetype') {% endcomment %}
+            src: url("{% if font_url %}{{ font_url }}{% endif %}") format('truetype');
         }
         body {
-            font-family: Arial Unicode, MyFont, Times, Jost, sans-serif;
+            font-family: Jost, MyFont;
             font-size: 13px;
         }
         .section {
@@ -42,7 +41,7 @@
             border-spacing: 5px;
             border-collapse: collapse;
             margin-top: 10px;
-            width: content;
+            width: 100%;
             left: 0;
         }
         table th {
@@ -55,6 +54,9 @@
         ul {
             margin-top: 0px;
             margin-left: 5px;
+        }
+        .attachment {
+            width: 100%;
         }
         .attachment td{
             border: none;
@@ -109,10 +111,10 @@
         {% for item in school_equipment %}
         <tr>
             <td>{{ forloop.counter }}</td>
-            <td>{{ item.equip.equipment.name }}</td>
-            <td>{{ item.equip.quantity }}</td>
+            <td>{{ item.name }}</td>
+            <td>{{ item.quantity }}</td>
             <td style="padding: 2px">
-                {% for number in item.equip.serial_numbers_list %}
+                {% for number in item.serial_numbers_list %}
                 {{ number }}<br>
                 {% endfor %}
             </td>
@@ -238,7 +240,7 @@
                     <p class="under1"><i>(członkowie komisji odbioru)</i></p>
                 </td>
                 <td style="text-align: right;">
-                    ...........................................................................
+                    <p>...........................................................................</p>
                     <p class="under2"><i>(przedstawiciel Wykonawcy)</i></p>
                 </td>
             </tr>

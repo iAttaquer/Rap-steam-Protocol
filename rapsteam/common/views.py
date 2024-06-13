@@ -10,16 +10,39 @@ from django.http import HttpResponse, HttpResponseServerError, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.template.loader import get_template, render_to_string
 from django.views import View
-from reportlab.pdfgen import canvas
+from django.contrib.staticfiles import finders
 from xhtml2pdf import pisa
 import xhtml2pdf.pisa as pisa
 import os
 os.environ["PISA_SHOW_LOG"] = "True"
+from django.contrib.staticfiles.storage import staticfiles_storage
 
 from common.models import Address
 from common.models import School, Settings, SchoolEquipment
-
 from datetime import date, datetime
+
+from django.conf import settings
+import pdfkit
+import subprocess
+
+#path to wkhtmltopdf
+config = pdfkit.configuration(wkhtmltopdf=r"C:/Program Files/wkhtmltopdf/bin/wkhtmltopdf.exe")
+
+from django.views.decorators.http import require_POST, require_http_methods
+
+def font_link_callback(uri, rel):
+    """
+    Converts font URIs to absolute system paths for wkhtmltopdf.
+    """
+
+    # Check if the URI starts with the static URL
+    if uri.startswith(settings.STATIC_URL):
+        # Remove the STATIC_URL prefix and join with the STATIC_ROOT to get the absolute path
+        font_path = os.path.join(settings.STATIC_ROOT, uri.replace(settings.STATIC_URL, "", 1))
+        return font_path
+    else:
+        # If not a static file, return the URI as is
+        return uri
 
 class SchoolSelectionView(View):
     def get(self, request, *args, **kwargs):
@@ -39,6 +62,7 @@ class SchoolSelectionView(View):
                 school = School.objects.filter(school_name=school_name)
                 school = school.filter(address__city=city).first()
                 request.session['school_name'] = school_name
+                request.session['city'] = city
 
                 school_address = school.address
                 city = school_address.city
@@ -62,33 +86,54 @@ class SchoolSelectionView(View):
         else:
             return redirect('wybor_szkoly')
 
+
 class ProtocolView(View):
-    def get(self, request, school_name, *args, **kwargs):
-        school_city = request.GET.get("city", '')
+    def get(self, request, *args, **kwargs):
+        context_dict = request.session.get('context_dict',{})
+        if 'school_equipment' in context_dict:
+            context_dict['school_equipment'] = [
+                {
+                    'name': equip['name'],  # Bezpośredni dostęp do nazwy
+                    'quantity': equip['quantity'],
+                    'serial_numbers_list': equip['serial_numbers_list'],
+                    'delivery_status': equip.get('delivery_status'),
+                    'comment': equip.get('comment'),
+                }
+                for equip in context_dict['school_equipment']
+            ]
+        return render_to_pdf('protocol_pdf.html', context_dict)
+
+    def post(self, request, school_name, *args, **kwargs):
+        school_name = request.session.get('school_name')
+        school_city = request.session.get('city', '')
         school = School.objects.filter(school_name=school_name)
         school = school.filter(address__city=school_city).first()
-        receipt_date = request.GET.get("receipt-date", '')
+
+        if not school:
+            return HttpResponseServerError("Nie znaleziono szkoły")
+
+        receipt_date = request.POST.get("receipt-date", '')
         receipt_date = datetime.strptime(receipt_date, "%Y-%m-%d").strftime("%d.%m.%Y")
-        contract_number = request.GET.get("contract-number", '')
-        completeness_yes = request.GET.get("completeness-yes")
-        completeness_no = request.GET.get("completeness-no")
-        caveats_completeness = request.GET.get("caveats-completeness", '')
-        compliance_yes = request.GET.get("compliance-yes")
-        compliance_no = request.GET.get("compliance-no")
-        caveats_compliance = request.GET.get("caveats-compliance", '')
-        term_yes = request.GET.get("term-yes")
-        term_no = request.GET.get("term-no")
-        caveats_term = request.GET.get("caveats-term", '')
-        result_yes = request.GET.get("result-yes")
-        result_no = request.GET.get("result-no")
-        caveats_result = request.GET.get("caveats-result", '')
-        
+        contract_number = request.POST.get("contract-number", '')
+        completeness_yes = request.POST.get("completeness-yes")
+        completeness_no = request.POST.get("completeness-no")
+        caveats_completeness = request.POST.get("caveats-completeness", '')
+        compliance_yes = request.POST.get("compliance-yes")
+        compliance_no = request.POST.get("compliance-no")
+        caveats_compliance = request.POST.get("caveats-compliance", '')
+        term_yes = request.POST.get("term-yes")
+        term_no = request.POST.get("term-no")
+        caveats_term = request.POST.get("caveats-term", '')
+        result_yes = request.POST.get("result-yes")
+        result_no = request.POST.get("result-no")
+        caveats_result = request.POST.get("caveats-result", '')
+
         school_equipment = SchoolEquipment.objects.filter(school=school)
         equipment_with_data = []
         for i, equip in enumerate(school_equipment, start=1):
             equip.serial_numbers_list = equip.serial_numbers.split(',')
-            delivery_status = request.GET.get(f'delivery-status-{i}', '')
-            comment = request.GET.get(f'comment-{i}', '')
+            delivery_status = request.POST.get(f'delivery-status-{i}', '')
+            comment = request.POST.get(f'comment-{i}', '')
             print(comment)
             equipment_with_data.append({
                 'equip': equip,
@@ -97,7 +142,7 @@ class ProtocolView(View):
             })
         settings = Settings.objects.last()
         logo_path = settings.pdf_protocol_logo.path if settings.pdf_protocol_logo else None
-        
+
         context_dict = {
             "school_name": school.school_name,
             "city": school.address.city,
@@ -122,13 +167,25 @@ class ProtocolView(View):
             "result_yes": result_yes,
             "result_no": result_no,
             "caveats_result": caveats_result,
-            "school_equipment": equipment_with_data,
+            "school_equipment": [
+                {
+                    'name': equip.equipment.name,
+                    'quantity': equip.quantity,
+                    'serial_numbers_list': equip.serial_numbers.split(','),
+                    'delivery_status': request.POST.get(f'delivery-status-{i+1}', ''),
+                    'comment': request.POST.get(f'comment-{i+1}', ''),
+                }
+                for i, equip in enumerate(school_equipment)
+            ]
         }
-        return render_to_pdf("protocol_pdf.html", context_dict)
+        request.session['context_dict'] = context_dict
+        return render_to_pdf('protocol_pdf.html', context_dict)
 
-    def post(self, request, school_name, *args, **kwargs):
-        # TODO: generate PDFs based on school data
-        pass
+
+
+    # def post(self, request, school_name, *args, **kwargs):
+    #     # TODO: generate PDFs based on school data
+    #     pass
         # school = School.objects.get(director=request.user, pk=pk)
         # school = get_object_or_404(School, school_name=school_name)
         # print(school)
@@ -272,23 +329,41 @@ def load_schools_from_csv(request):
 def schools(request):
     return render(request, 'schools.html')
 
-# def render_to_pdf(template_src, context_dict):
-#     template = get_template(template_src)
-#     html = render.(context_dict)
-#     html = HTML(string=html_string)
-    
-
 def render_to_pdf(template_src, context_dict):
     template = get_template(template_src)
     html = template.render(context_dict)
-    # print("HTML content:", html)
-    result = BytesIO()
-    pdf = pisa.pisaDocument(BytesIO(html.encode("UTF-8")), result, encoding='UTF-8', path=context_dict['font'])
-    # pdf = pisa.pisaDocument(html, result, encoding='UTF-8', path=context_dict['font'])
-    if pdf.err:
-        return HttpResponse("Invalid PDF", status_code=400, content_type='text/plain')
-    return HttpResponse(result.getvalue(), content_type='application/pdf')
+    base_url = f'http://127.0.0.1:8000{settings.STATIC_URL}'
+    # print(context_dict)
+    options = {
+        '--enable-local-file-access': '',
+        '--load-error-handling': 'ignore',
+        '--quiet': '',
+        '--margin-top': '15mm',
+        '--margin-bottom': '15mm',
+        '--margin-left': '10mm',
+        '--margin-right': '10mm',
+        'encoding': "UTF-8",
+    }
 
-def pdf_view(request):
-    context = {'key': 'value'}
-    return render_to_pdf('pdf_view.html', context)
+    try:
+        pdf = pdfkit.from_string(html, False, configuration=config, options=options)
+    except subprocess.CalledProcessError as e:  # Catch the correct exception type
+        # Handle potential errors during PDF generation
+        return HttpResponse(f"Error generating PDF: {e.output.decode()}", status_code=500, content_type='text/plain')
+
+    response = HttpResponse(pdf, content_type='application/pdf')
+    response['Content-Disposition'] = 'inline; filename="report.pdf"'
+    return response
+
+
+# def render_to_pdf(template_src, context_dict):
+#     template = get_template(template_src)
+#     html = template.render(context_dict)
+#     # print("HTML content:", html)
+#     result = BytesIO()
+#     pdf = pisa.pisaDocument(BytesIO(html.encode("UTF-8")), result, encoding='UTF-8', path=context_dict['font'])
+#     # pdf = pisa.pisaDocument(html, result, encoding='UTF-8', path=context_dict['font'])
+#     if pdf.err:
+#         return HttpResponse("Invalid PDF", status_code=400, content_type='text/plain')
+#     return HttpResponse(result.getvalue(), content_type='application/pdf')
+# ISO-8859-2
