@@ -275,108 +275,107 @@
         </form>
     </div>
     <script>
-        const receiptDate = document.getElementById('receipt-date');
-        const contractNumber = document.getElementById('contract-number');
-        const completenessYes = document.querySelector('input[name="completeness-yes"]');
-        const completenessNo = document.querySelector('input[name="completeness-no"]');
-        const caveatsCompleteness = document.getElementById('caveats-completeness');
-        const complianceYes = document.querySelector('input[name="compliance-yes"]');
-        const complianceNo = document.querySelector('input[name="compliance-no"]');
-        const caveatsCompliance = document.getElementById('caveats-compliance');
-        const termYes = document.querySelector('input[name="term-yes"]');
-        const termNo = document.querySelector('input[name="term-no"]');
-        const caveatsTerm = document.getElementById('caveats-term');
-        const resultYes = document.querySelector('input[name="result-yes"]');
-        const resultNo = document.querySelector('input[name="result-no"]');
-        const caveatsResult = document.getElementById('caveats-result');
+        // Skrypt, który wyczyści zaznaczenia pól radio po załadowaniu strony
+        window.onload = function() {
+            var radioButtons = document.querySelectorAll('input[type="radio"]');
+            radioButtons.forEach(function(radio) {
+                radio.checked = false;
+            });
 
-        caveatsCompleteness.style.display = 'none';
-        caveatsCompliance.style.display = 'none';
-        caveatsTerm.style.display = 'none';
-        caveatsResult.style.display = 'none';
+            // Sprawdź, czy wszystkie wymagane pola są wypełnione poprawnie
+            validateForm();
+        };
 
-        completenessYes.addEventListener('click', () => {
-            completenessNo.checked = false;
+        document.addEventListener('DOMContentLoaded', function() {
+            const receiptDate = document.getElementById('receipt-date');
+            const contractNumber = document.getElementById('contract-number');
+            const completenessYes = document.querySelector('input[name="completeness-yes"]');
+            const completenessNo = document.querySelector('input[name="completeness-no"]');
+            const caveatsCompleteness = document.getElementById('caveats-completeness');
+            const complianceYes = document.querySelector('input[name="compliance-yes"]');
+            const complianceNo = document.querySelector('input[name="compliance-no"]');
+            const caveatsCompliance = document.getElementById('caveats-compliance');
+            const termYes = document.querySelector('input[name="term-yes"]');
+            const termNo = document.querySelector('input[name="term-no"]');
+            const caveatsTerm = document.getElementById('caveats-term');
+            const resultYes = document.querySelector('input[name="result-yes"]');
+            const resultNo = document.querySelector('input[name="result-no"]');
+            const caveatsResult = document.getElementById('caveats-result');
+
             caveatsCompleteness.style.display = 'none';
-            caveatsCompleteness.value = '';
-            completenessYes.value = '1';
-            completenessNo.value = '';
-        });
-        completenessNo.addEventListener('click', () => {
-            completenessYes.checked = false;
-            caveatsCompleteness.style.display = 'block';
-            completenessYes.value = '';
-            completenessNo.value = '1';
-        });
-        complianceYes.addEventListener('click', () => {
-            complianceNo.checked = false;
             caveatsCompliance.style.display = 'none';
-            caveatsCompliance.value = '';
-            complianceYes.value = '1';
-            complianceNo.value = '';
-        });
-        complianceNo.addEventListener('click', () => {
-            complianceYes.checked = false;
-            caveatsCompliance.style.display = 'block';
-            complianceYes.value = '';
-            complianceNo.value = '1';
-        });
-        termYes.addEventListener('click', () => {
-            termNo.checked = false;
             caveatsTerm.style.display = 'none';
-            caveatsTerm.value = '';
-            termYes.value = '1';
-            termNo.value = '';
-        });
-        termNo.addEventListener('click', () => {
-            termYes.checked = false;
-            caveatsTerm.style.display = 'block';
-            termYes.value = '';
-            termNo.value = '1';
-        });
-        resultYes.addEventListener('click', () => {
-            resultNo.checked = false;
             caveatsResult.style.display = 'none';
-            caveatsResult.value = '';
-            resultYes.value = '1';
-            resultNo.value = '';
-        });
-        resultNo.addEventListener('click', () => {
-            resultYes.checked = false;
-            caveatsResult.style.display = 'block';
-            resultYes.value = '';
-            resultNo.value = '1';
-        });
 
-        const submitButton = document.getElementById('submit-button');
-        submitButton.addEventListener('click', () => {
-            if (receiptDate.value == ''){
-                alert("Nie wybrano daty odbioru!");
-                return;
+            function handleRadioClick(yesRadio, noRadio, caveats) {
+                yesRadio.addEventListener('click', () => {
+                    noRadio.checked = false;
+                    caveats.style.display = 'none';
+                    caveats.value = '';
+                    yesRadio.value = '1';
+                    noRadio.value = '';
+                    validateForm();
+                });
+                noRadio.addEventListener('click', () => {
+                    yesRadio.checked = false;
+                    caveats.style.display = 'block';
+                    yesRadio.value = '';
+                    noRadio.value = '1';
+                    validateForm();
+                });
             }
-            if (contractNumber.value == '') {
-                alert("Nie wybrano numeru Umowy!");
-                return;
+
+            handleRadioClick(completenessYes, completenessNo, caveatsCompleteness);
+            handleRadioClick(complianceYes, complianceNo, caveatsCompliance);
+            handleRadioClick(termYes, termNo, caveatsTerm);
+            handleRadioClick(resultYes, resultNo, caveatsResult);
+
+            const requiredFields = [receiptDate, contractNumber, completenessYes, completenessNo, complianceYes, complianceNo, termYes, termNo, resultYes, resultNo];
+            requiredFields.forEach(field => {
+                field.addEventListener('input', validateForm);
+            });
+
+            function validateForm() {
+                const isFormValid = receiptDate.value !== '' &&
+                    contractNumber.value !== '' &&
+                    (completenessYes.checked || completenessNo.checked) &&
+                    (complianceYes.checked || complianceNo.checked) &&
+                    (termYes.checked || termNo.checked) &&
+                    (resultYes.checked || resultNo.checked);
+
+                document.getElementById('submit-button').disabled = !isFormValid;
             }
-            if (completenessYes.value == '' && completenessNo.value == '') {
-                alert("Nie uzupełniono potwierdzenia realizacji przedmiotu Umowy!");
-                return;
-            }
-            if (complianceYes.value == '' && complianceNo.value == '') {
-                alert("Nie uzupełniono potwierdzenia zgodności jakości przyjmowanego przedmiotu Umowy!");
-                return;
-            }
-            if (termYes.value == '' && termNo.value == '') {
-                alert("Nie uzupełniono zgodności terminu z Umową!");
-                return;
-            }
-            if (resultYes.value == '' && resultNo.value == '') {
-                alert("Nie podano końcowego wyniku odbioru!");
-                return;
-            }
-            document.querySelector('form').submit();
+
+            const submitButton = document.getElementById('submit-button');
+            submitButton.addEventListener('click', (event) => {
+                let errorMessage = '';
+                if (receiptDate.value == '') {
+                    errorMessage += "Nie wybrano daty odbioru!\n";
+                }
+                if (contractNumber.value == '') {
+                    errorMessage += "Nie wybrano numeru Umowy!\n";
+                }
+                if (!completenessYes.checked && !completenessNo.checked) {
+                    errorMessage += "Nie uzupełniono potwierdzenia realizacji przedmiotu Umowy!\n";
+                }
+                if (!complianceYes.checked && !complianceNo.checked) {
+                    errorMessage += "Nie uzupełniono potwierdzenia zgodności jakości przyjmowanego przedmiotu Umowy!\n";
+                }
+                if (!termYes.checked && !termNo.checked) {
+                    errorMessage += "Nie uzupełniono zgodności terminu z Umową!\n";
+                }
+                if (!resultYes.checked && !resultNo.checked) {
+                    errorMessage += "Nie podano końcowego wyniku odbioru!\n";
+                }
+
+                if (errorMessage !== '') {
+                    alert(errorMessage);
+                    event.preventDefault();
+                } else {
+                    document.querySelector('form').submit();
+                }
+            });
         });
-        
     </script>
 </body>
 </html>
