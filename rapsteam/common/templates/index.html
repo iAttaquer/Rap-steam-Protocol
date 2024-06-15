@@ -157,7 +157,7 @@
                     <input type="hidden" id="selected-school-city" name="city">
                     <button type="submit" id="submit-button">Dalej</button>
 
-                <button id="pdfButton">Podgląd PDF</button>
+                
             </div>
         </form>
     </div>
@@ -270,10 +270,6 @@
                 return;
             }
             document.querySelector('form').submit();
-        });
-
-        document.getElementById('pdfButton').addEventListener('click', function() {
-            window.open('/pdf_view/', '_blank');
         });
     </script>
 
